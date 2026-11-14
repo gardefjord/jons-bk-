@@ -1,0 +1,49 @@
+name: Update data and deploy
+on:
+  schedule:
+    - cron: "17 */3 * * *"   # every 3 hours
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: [jons-bk.html, data.json, scripts/**, .github/workflows/deploy.yml]
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: false
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - name: Update data.json from Korpen
+        env:
+          KORPEN_USER: ${{ secrets.KORPEN_USER }}
+          KORPEN_PASS: ${{ secrets.KORPEN_PASS }}
+        run: node scripts/update.mjs
+      - name: Commit data.json if it changed
+        run: |
+          if ! git diff --quiet data.json; then
+            git config user.name "jons-bk-bot"
+            git config user.email "actions@users.noreply.github.com"
+            git add data.json
+            git commit -m "Update match data"
+            git push
+          fi
+      - name: Build site
+        run: |
+          mkdir _site
+          cp jons-bk.html _site/index.html
+          cp data.json _site/data.json
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with: { path: _site }
+      - id: deploy
+        uses: actions/deploy-pages@v4
