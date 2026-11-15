@@ -18,18 +18,16 @@ function resOf(m) { var a = +m.gf, b = +m.ga; return a > b ? "W" : a < b ? "L" :
 var RES = { W: ["V", "Vinst"], D: ["O", "Oavgjort"], L: ["L", "Lärdom"] };
 
 /* ---------- grafik ---------- */
-var DEFS = '<svg width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="wob" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency=".022" numOctaves="2" seed="4"/><feDisplacementMap in="SourceGraphic" scale="4.5"/></filter></svg>';
 var NAV = [["start", "Start", "index.html"], ["matcher", "Matcher", "matcher.html"], ["laget", "Laget", "laget.html"]];
 
 /* ---------- gemensam ram ---------- */
 function frame(inner, d) {
   d = d || {};
-  var h = DEFS + '<div class="wrap">';
-  h += '<header class="mast"><a href="index.html" class="logo"><img src="assets/logo/jons-bk-rosa.png" width="118" height="117" alt="Jons BK, till startsidan"></a><div><h1><a href="index.html">Jons BK</a></h1><p>Korpen Stockholm' + (d.league ? ', ' + esc(d.league) : '') + '</p></div></header>';
-  h += '<div class="ticker" aria-hidden="true"><span>Jons är kärlek <b>&hearts;</b> Söndagar på ' + esc(d.venue || "Långholmens BP") + ' <b>&hearts;</b> Passa bollen, passa kärleken <b>&hearts;</b> Alla får vara med <b>&hearts;</b> Styrka 95, kärlek 100 <b>&hearts;</b> Fotboll är vackert <b>&hearts;</b></span></div>';
+  var h = '<div class="wrap">';
+  h += '<header class="mast"><a href="index.html" class="logo"><img src="assets/logo/jons-bk-roed.png" width="60" height="60" alt="Jons BK, till startsidan"></a><div><h1><a href="index.html">Jons BK</a></h1><p>Korpen Stockholm' + (d.league ? ' · ' + esc(d.league) : '') + '</p></div></header>';
   h += '<nav aria-label="Huvudmeny"><ul class="nav">' + NAV.map(function (n) { return '<li><a href="' + n[2] + '"' + (n[0] === PAGE ? ' aria-current="page"' : '') + '>' + n[1] + '</a></li>'; }).join("") + '</ul></nav>';
   h += '<main>' + inner + '</main>';
-  h += '<footer class="foot"><img src="assets/logo/jons-bk-rosa.png" width="120" height="119" alt=""><p class="love">Jons är kärlek</p><small>Gjord med kärlek &hearts; Matcher och tabell från Korpen Stockholm</small></footer></div>';
+  h += '<footer class="foot"><img src="assets/logo/jons-bk-roed.png" width="44" height="44" alt=""><p class="love">Jons är kärlek</p><small>Matcher och tabell från Korpen Stockholm</small></footer></div>';
   root.innerHTML = h;
 }
 function fail() { frame('<p class="note">Vi kunde inte hämta sidans innehåll just nu. Försök igen om en stund, så rullar bollen vidare.</p>'); }
@@ -44,7 +42,7 @@ function lists(s) {
 }
 function nextCard(s, next) {
   var h = '<section aria-labelledby="h-next"><div class="card">';
-  h += '<h2 class="nameplate" id="h-next"><span class="yr">2026</span>Nästa match</h2>';
+  h += '<h2 class="nameplate" id="h-next">Nästa match</h2>';
   if (next) {
     var d = when(next);
     h += '<div class="scene"><span class="sticker">' + esc(countdown(d)) + '</span><div class="versus"><span class="us">Jons BK</span><span class="vs">mot</span><span class="them">' + esc(next.opp) + '</span></div></div>';
@@ -111,7 +109,7 @@ function order(p) { var ids = SERIES.map(function (s) { return s.id; }); return 
 function pick(p, id) { return p.kort.filter(function (k) { return k.serie === id; })[0] || p.kort[0]; }
 function tile(p) {
   var k = pick(p, "2026");
-  return '<li><button class="tile" data-id="' + esc(p.id) + '" aria-label="Öppna spelarkortet för ' + esc(p.namn) + '"><img src="' + esc(k.bild) + '" width="250" height="390" loading="lazy" alt="' + esc(p.namn) + ', ' + esc((POS[k.pos] || k.pos).toLowerCase()) + ', Jons BK spelarkort"><b>' + esc(p.namn) + '</b><small>' + esc(POS[k.pos] || k.pos) + '</small><span class="pt">&hearts; 100</span></button></li>';
+  return '<li><button class="tile" data-id="' + esc(p.id) + '" aria-label="Öppna spelarkortet för ' + esc(p.namn) + '"><img src="' + esc(k.bild) + '" width="250" height="390" loading="lazy" alt="' + esc(p.namn) + ', ' + esc((POS[k.pos] || k.pos).toLowerCase()) + ', Jons BK spelarkort"><b>' + esc(p.namn) + '</b><small>' + esc(POS[k.pos] || k.pos) + '</small></button></li>';
 }
 function pageLaget(d, data) {
   PL = data.spelare; SERIES = data.serier || [];
