@@ -1,0 +1,19 @@
+name: Probe Zoezi
+on: workflow_dispatch   # run by hand from the Actions tab
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - run: npm install --no-save playwright@1.49.0 && npx playwright install --with-deps chromium
+      - name: Log in and list JSON endpoints
+        env:
+          KORPEN_USER: ${{ secrets.KORPEN_USER }}
+          KORPEN_PASS: ${{ secrets.KORPEN_PASS }}
+        run: node scripts/probe.mjs
+      - uses: actions/upload-artifact@v4
+        with: { name: probe-result, path: probe-result.json }
