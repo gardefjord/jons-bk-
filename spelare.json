@@ -1,5 +1,5 @@
 {
- "_hjalp": "Redigera här på GitHub. 'utnamningar' är en lista med text, t.ex. [\"Årets hjärta 2026\"]. Ett kort per kortserie i 'kort'. 'forebild' är proffset spelaren påminner om: 'youtube' är klippets id (det efter v= i länken), 'baddas_in' false betyder att klippet bara går att öppna på YouTube.",
+ "_hjalp": "Redigera här på GitHub. 'utnamningar' är en lista med text, t.ex. [\"Årets hjärta 2026\"]. Ett kort per kortserie i 'kort'. 'forebild' är proffset spelaren spelar i samma anda som.",
  "serier": [
   {
    "id": "2024",
@@ -91,13 +91,7 @@
     "serie": "2024"
    },
    "forebild": {
-    "namn": "Juninho Pernambucano",
-    "text": "Frisparkarna. Det står redan på kortet.",
-    "youtube": "Kj96HWyzSHw",
-    "titel": "Juninho, maître des coups francs",
-    "kanal": "Olympique Lyonnais",
-    "baddas_in": true,
-    "kalla": "kortet"
+    "namn": "Juninho Pernambucano"
    }
   },
   {
@@ -176,13 +170,7 @@
     "serie": "2024"
    },
    "forebild": {
-    "namn": "Andrés Iniesta",
-    "text": "Hittar alltid en lösning, hur trångt det än är.",
-    "youtube": "q5Frl4rwT2M",
-    "titel": "Andrés Iniesta, moments of magical skill",
-    "kanal": "FC Barcelona",
-    "baddas_in": true,
-    "kalla": "förslag"
+    "namn": "Andrés Iniesta"
    }
   },
   {
@@ -261,13 +249,7 @@
     "serie": "2024"
    },
    "forebild": {
-    "namn": "Sergio Busquets",
-    "text": "Sticker fram en fot och bollen är hans.",
-    "youtube": "aFY9MZxtuvY",
-    "titel": "Busquets, 10 years at Barça",
-    "kanal": "FC Barcelona",
-    "baddas_in": true,
-    "kalla": "förslag"
+    "namn": "Sergio Busquets"
    }
   },
   {
@@ -346,13 +328,7 @@
     "serie": "2024"
    },
    "forebild": {
-    "namn": "Carles Puyol",
-    "text": "Ger sig aldrig och hinner ikapp alla.",
-    "youtube": "GEz-kzDeMmQ",
-    "titel": "Carles Puyol's 18 goals for FC Barcelona",
-    "kanal": "FC Barcelona",
-    "baddas_in": true,
-    "kalla": "förslag"
+    "namn": "Carles Puyol"
    }
   },
   {
@@ -431,13 +407,7 @@
     "serie": "2024"
    },
    "forebild": {
-    "namn": "Gianluigi Buffon",
-    "text": "Lugnet i målet.",
-    "youtube": "8-YBByPKRrA",
-    "titel": "Gianluigi Buffon, top ten saves",
-    "kanal": "Juventus",
-    "baddas_in": true,
-    "kalla": "förslag"
+    "namn": "Gianluigi Buffon"
    }
   },
   {
@@ -516,13 +486,7 @@
     "serie": "2024"
    },
    "forebild": {
-    "namn": "Steven Gerrard",
-    "text": "Mittfältaren med kraftskottet.",
-    "youtube": "62MvIuqdKR8",
-    "titel": "Steven Gerrard's Premier League screamers",
-    "kanal": "Liverpool FC",
-    "baddas_in": true,
-    "kalla": "förslag"
+    "namn": "Steven Gerrard"
    }
   },
   {
@@ -601,13 +565,7 @@
     "serie": "2024"
    },
    "forebild": {
-    "namn": "Patrick Vieira",
-    "text": "Långa ben som når bollen från alla vinklar.",
-    "youtube": "9rRftxszLe4",
-    "titel": "Patrick Vieira, Premier League Hall of Fame",
-    "kanal": "Premier League",
-    "baddas_in": false,
-    "kalla": "förslag"
+    "namn": "Patrick Vieira"
    }
   },
   {
@@ -686,13 +644,7 @@
     "serie": "2024"
    },
    "forebild": {
-    "namn": "Ronaldinho",
-    "text": "Elasticon, glädjen och modet under press.",
-    "youtube": "ANAirNHpXA8",
-    "titel": "Every Ronaldinho strike for Barça",
-    "kanal": "FC Barcelona",
-    "baddas_in": true,
-    "kalla": "förslag"
+    "namn": "Ronaldinho"
    }
   },
   {
@@ -802,13 +754,7 @@
     "serie": "2024"
    },
    "forebild": {
-    "namn": "Francesco Totti",
-    "text": "Italiensk högerfot som hittar rätt med passningen.",
-    "youtube": "M4JWASHX0Ps",
-    "titel": "44 great assists, Francesco Totti",
-    "kanal": "AS Roma",
-    "baddas_in": true,
-    "kalla": "förslag"
+    "namn": "Francesco Totti"
    }
   },
   {
@@ -887,13 +833,7 @@
     "serie": "2024"
    },
    "forebild": {
-    "namn": "Jay-Jay Okocha",
-    "text": "Fötterna och dribblingarna. Det står redan på kortet.",
-    "youtube": "2HFso_FLPV4",
-    "titel": "There will never be another Jay-Jay Okocha",
-    "kanal": "Premier League",
-    "baddas_in": false,
-    "kalla": "kortet"
+    "namn": "Jay-Jay Okocha"
    }
   },
   {
@@ -941,13 +881,7 @@
     "serie": "2024"
    },
    "forebild": {
-    "namn": "Sergio Ramos",
-    "text": "Nickar som känns ända upp på läktaren.",
-    "youtube": "EbO46COjlNE",
-    "titel": "Legendary headers by Sergio Ramos",
-    "kanal": "Real Madrid",
-    "baddas_in": true,
-    "kalla": "förslag"
+    "namn": "Sergio Ramos"
    }
   },
   {
@@ -995,13 +929,7 @@
     "serie": "2024"
    },
    "forebild": {
-    "namn": "Carlos Tevez",
-    "text": "Tröttnar aldrig på att jaga bollen.",
-    "youtube": "CBDhMYgyzKg",
-    "titel": "Every Carlos Tevez goal in the Premier League",
-    "kanal": "Premier League",
-    "baddas_in": true,
-    "kalla": "förslag"
+    "namn": "Carlos Tevez"
    }
   },
   {
@@ -1049,13 +977,7 @@
     "serie": "2024"
    },
    "forebild": {
-    "namn": "Filippo Inzaghi",
-    "text": "Näsan för mål. Det står redan på kortet.",
-    "youtube": "YU-MYJwUr3E",
-    "titel": "Pippo Inzaghi, top 10 Champions League goals",
-    "kanal": "AC Milan",
-    "baddas_in": true,
-    "kalla": "kortet"
+    "namn": "Filippo Inzaghi"
    }
   },
   {
@@ -1103,13 +1025,7 @@
     "serie": "2024"
    },
    "forebild": {
-    "namn": "Andrea Pirlo",
-    "text": "Skotten och lugnet. Det står redan på kortet.",
-    "youtube": "R1dwKuyA-lk",
-    "titel": "Andrea Pirlo, iconic journey at Juventus",
-    "kanal": "Juventus",
-    "baddas_in": true,
-    "kalla": "kortet"
+    "namn": "Andrea Pirlo"
    }
   },
   {
@@ -1157,13 +1073,7 @@
     "serie": "2024"
    },
    "forebild": {
-    "namn": "N'Golo Kanté",
-    "text": "Vinner tillbaka bollen, gång på gång.",
-    "youtube": "jpdPbTnBh2A",
-    "titel": "10 minutes of N'Golo Kanté being legendary",
-    "kanal": "Premier League",
-    "baddas_in": true,
-    "kalla": "förslag"
+    "namn": "N'Golo Kanté"
    }
   },
   {
@@ -1211,13 +1121,7 @@
     "serie": "2024"
    },
    "forebild": {
-    "namn": "Xavi",
-    "text": "Lagspelaren som alltid hittar passningen.",
-    "youtube": "XWSMTIaA71g",
-    "titel": "Thank you Xavi",
-    "kanal": "FC Barcelona",
-    "baddas_in": true,
-    "kalla": "förslag"
+    "namn": "Xavi"
    }
   }
  ]
