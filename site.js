@@ -24,7 +24,7 @@ var NAV = [["start", "Start", "index.html"], ["matcher", "Matcher", "matcher.htm
 function frame(inner, d) {
   d = d || {};
   var h = '<div class="wrap">';
-  h += '<header class="mast"><a href="index.html" class="logo"><img src="assets/logo/jons-bk-roed.png" width="60" height="60" alt="Jons BK, till startsidan"></a><div><h1><a href="index.html">Jons BK</a></h1><p>Korpen Stockholm' + (d.league ? ' · ' + esc(d.league) : '') + '</p></div></header>';
+  h += '<header class="mast"><a href="index.html" class="logo"><img src="assets/logo/jons-bk-roed.png" width="230" height="229" alt="Jons BK, till startsidan"></a><h1 class="sr">Jons BK</h1><p>Korpen Stockholm' + (d.league ? ' · ' + esc(d.league) : '') + '</p></header>';
   h += '<nav aria-label="Huvudmeny"><ul class="nav">' + NAV.map(function (n) { return '<li><a href="' + n[2] + '"' + (n[0] === PAGE ? ' aria-current="page"' : '') + '>' + n[1] + '</a></li>'; }).join("") + '</ul></nav>';
   h += '<main>' + inner + '</main>';
   h += '<footer class="foot"><img src="assets/logo/jons-bk-roed.png" width="44" height="44" alt=""><p class="love">Jons är kärlek</p><small>Matcher och tabell från Korpen Stockholm</small></footer></div>';
@@ -66,11 +66,15 @@ function formRow(done) {
   done.slice(0, 5).reverse().forEach(function (m) { h += chip(resOf(m)); });
   return h + '</p>';
 }
+function resRows(list) {
+  var h = '<ul class="rows">';
+  list.forEach(function (m) { var r = resOf(m); h += '<li><span class="when">' + esc(fmtDay(when(m))) + '</span>' + chip(r) + '<span class="opp">' + esc(m.opp) + '</span><span class="score">' + esc(m.gf) + '&ndash;' + esc(m.ga) + '</span></li>'; });
+  return h + '</ul>';
+}
+var LEGEND = '<p class="fine">Jons BK:s mål står alltid först i resultatet. V = vinst, O = oavgjort, L = lärdom.</p>';
 function playedList(done) {
   if (!done.length) return '<p>Inga matcher spelade än den här säsongen. Det bästa är fortfarande på väg.</p>';
-  var h = formRow(done) + '<ul class="rows">';
-  done.forEach(function (m) { var r = resOf(m); h += '<li><span class="when">' + esc(fmtDay(when(m))) + '</span>' + chip(r) + '<span class="opp">' + esc(m.opp) + '</span><span class="score">' + esc(m.gf) + '&ndash;' + esc(m.ga) + '</span></li>'; });
-  return h + '</ul><p class="fine">Jons BK:s mål står alltid först i resultatet. V = vinst, O = oavgjort, L = lärdom.</p>';
+  return formRow(done) + resRows(done) + LEGEND;
 }
 function standings(s) {
   return (s.table || []).map(function (r) {
@@ -89,7 +93,7 @@ var DEMO = '<p class="note">Resultaten och tabellen här är exempel för att vi
 
 function pageStart(s) {
   var L = lists(s), h = (s.demo ? DEMO : "") + nextCard(s, L.next) + upcoming(s, L.later);
-  if (L.done.length) h += sec("Formen just nu", formRow(L.done).replace(/^<p class="form">/, '<p class="form" style="border:0;margin:0">') + '<p class="fine">V = vinst, O = oavgjort, L = lärdom. Varje match är ett tillfälle att spela fotboll tillsammans.</p>');
+  if (L.done.length) h += sec("Senaste resultat", resRows(L.done.slice(0, 5)) + LEGEND + '<p class="more"><a href="matcher.html#spelade">Alla resultat och tabellen <span aria-hidden="true">&rarr;</span></a></p>');
   h += '<section class="sec"><h2>Utforska</h2><div class="panel"><ul class="tiles">' +
     '<li><a href="matcher.html"><div><b>Matcher &amp; tabell</b><span>Resultat, kommande matcher och ställning</span></div><i>&rarr;</i></a></li>' +
     '<li><a href="laget.html"><div><b>Laget</b><span>Ett spelarkort med superkraft för varje hjärta</span></div><i>&rarr;</i></a></li>' +
@@ -98,7 +102,7 @@ function pageStart(s) {
 }
 function pageMatcher(s) {
   var L = lists(s);
-  frame((s.demo ? DEMO : "") + (L.next ? nextCard(s, L.next) : "") + upcoming(s, L.later) + sec("Spelade matcher", playedList(L.done)) + sec("Tabell", tableHtml(s)), s);
+  frame((s.demo ? DEMO : "") + (L.next ? nextCard(s, L.next) : "") + upcoming(s, L.later) + sec("Spelade matcher", playedList(L.done), "spelade") + sec("Tabell", tableHtml(s), "tabell"), s);
 }
 
 /* ---------- laget ---------- */
