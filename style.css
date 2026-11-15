@@ -24,12 +24,10 @@ a{color:inherit}
 .mast{display:flex;flex-direction:column;align-items:center;margin-bottom:18px}
 .mast .logo img{width:min(150px,40vw);height:auto}
 .mast.home .logo img{width:min(230px,60vw);margin:2px 0 4px}
-.micro{display:flex;justify-content:space-between;gap:12px;margin:18px 0 0;font:700 11px/1.4 var(--body);letter-spacing:.1em;text-transform:uppercase;color:var(--soft)}
-.micro span:last-child{white-space:nowrap;text-align:right}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
 /* meny: enkla textlänkar. Aktuell sida är ljus och understruken. */
-.nav{display:flex;flex-wrap:wrap;justify-content:center;gap:4px 28px;list-style:none;margin:0 0 6px;padding:0}
+.nav{display:flex;flex-wrap:wrap;justify-content:center;gap:4px 28px;list-style:none;margin:0 0 22px;padding:0}
 .nav a{display:block;padding:8px 0;font-weight:800;font-size:12.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--soft);text-decoration:none;border-bottom:2px solid transparent;transition:color .15s,border-color .15s}
 .nav a:active{opacity:.7}
 .nav a[aria-current="page"]{color:var(--text);border-color:var(--mint)}
@@ -145,6 +143,13 @@ table.lg{width:100%;border-collapse:collapse;font-size:14px;font-variant-numeric
 .bars em{font:800 12px/1 var(--body);font-style:normal;color:var(--mint);white-space:nowrap}
 .swap{animation:rise .32s cubic-bezier(.2,.8,.2,1) both}
 @keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.pro .proname{margin:0;font:600 30px/1.05 var(--display);font-variation-settings:"SOFT" 100,"opsz" 72;color:var(--cream)}
+.pro .prowhy{margin:6px 0 12px;color:var(--soft)}
+.pro .clip:empty{display:none}
+.pro .clip{aspect-ratio:16/9;margin:0 0 12px;background:#000;border-radius:2px;overflow:hidden;animation:rise .32s cubic-bezier(.2,.8,.2,1) both}
+.pro .clip iframe{width:100%;height:100%;border:0;display:block}
+.proact{display:flex;flex-wrap:wrap;gap:8px}
+.proact .btn{display:inline-flex;align-items:center;text-decoration:none}
 .kraft{background:var(--pink);color:var(--ink);border-radius:2px;padding:12px 14px}
 .kraft b{display:block;font-size:16px}
 .awards{margin:0;padding:0;list-style:none;display:grid;gap:8px}

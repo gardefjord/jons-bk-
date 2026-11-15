@@ -28,7 +28,6 @@ function frame(inner, d) {
   var logo = '<a href="index.html" class="logo"><img src="assets/logo/jons-bk-rosa.png" width="230" height="229" alt="Jons BK, till startsidan"></a>';
   h += '<header class="mast' + (PAGE === "start" ? ' home' : '') + '">' + logo + '</header>';
   h += '<nav aria-label="Huvudmeny"><ul class="nav">' + NAV.map(function (n) { return '<li><a href="' + n[2] + '"' + (n[0] === PAGE ? ' aria-current="page"' : '') + '>' + n[1] + '</a></li>'; }).join("") + '</ul></nav>';
-  h += '<div class="micro"><span>Korpen Stockholm' + (d.league ? ' · ' + esc(d.league) : '') + '</span><span>' + esc(d.venue || "") + '</span></div>';
   h += '<main>' + (PAGE === "start" ? '<h1 class="sr">Jons BK</h1>' : '<h1 class="pagetitle">' + esc(TITLES[PAGE] || "") + '</h1>') + inner + '</main>';
   h += '<footer class="foot"><img src="assets/logo/jons-bk-rosa.png" width="44" height="44" alt=""><p class="love">Jons är kärlek</p><small>Matcher och tabell från Korpen Stockholm</small></footer></div>';
   root.innerHTML = h;
@@ -129,7 +128,12 @@ function pageLaget(d, data) {
   root.addEventListener("click", function (e) {
     var n = e.target.closest(".names button"); if (n) return select(n.dataset.id);
     var s = e.target.closest("[data-step]"); if (s) return step(+s.dataset.step);
-    var c = e.target.closest(".chip"); if (c) showSerie(c.dataset.s, 0);
+    var c = e.target.closest(".chip"); if (c) return showSerie(c.dataset.s, 0);
+    var v = e.target.closest("[data-clip]");
+    if (v) { /* klippet laddas först när man trycker, från YouTubes cookiefria adress */
+      $("clip").innerHTML = '<iframe src="https://www.youtube-nocookie.com/embed/' + encodeURIComponent(v.dataset.clip) + '?autoplay=1&rel=0" title="' + esc(v.dataset.title) + '" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen loading="lazy"></iframe>';
+      v.remove();
+    }
   });
   document.addEventListener("keydown", function (e) {
     if (e.target.closest("input,textarea,select")) return;
@@ -155,6 +159,15 @@ function select(id, quiet) {
   $("chips").innerHTML = order(cur).map(function (k) { return '<button type="button" class="chip" data-s="' + esc(k.serie) + '" aria-pressed="false">' + esc(seriesName(k.serie)) + '</button>'; }).join("");
   var x = "";
   if (cur.superkraft) x += '<h4>Superkraft (' + esc(seriesName(cur.superkraft.serie || "2024")) + ')</h4><div class="kraft"><b>' + esc(cur.superkraft.namn) + '</b>' + esc(cur.superkraft.text) + '</div>';
+  var f = cur.forebild;
+  if (f && f.youtube) {
+    var url = "https://www.youtube.com/watch?v=" + encodeURIComponent(f.youtube);
+    x += '<h4>Spelar i samma anda som</h4><div class="pro"><p class="proname">' + esc(f.namn) + '</p><p class="prowhy">' + esc(f.text) + '</p>' +
+      '<div class="clip" id="clip"></div><div class="proact">' +
+      (f.baddas_in !== false ? '<button type="button" class="btn sm" data-clip="' + esc(f.youtube) + '" data-title="' + esc(f.titel || f.namn) + '">&#9654; Spela klipp</button>' : '') +
+      '<a class="btn sm" href="' + url + '" target="_blank" rel="noopener">Öppna på YouTube &#8599;</a></div>' +
+      '<p class="fine">' + esc(f.titel || "") + (f.kanal ? ' · ' + esc(f.kanal) : '') + '</p></div>';
+  }
   x += '<h4>Utmärkelser</h4><ul class="awards">' + ((cur.utnamningar || []).length ? cur.utnamningar.map(function (u) { return '<li>' + esc(u) + '</li>'; }).join("") : '<li>Här samlas utmärkelserna. Alla är nominerade.</li>') + '</ul>';
   $("extra").innerHTML = x;
   if (dir) { replay($("who")); replay($("extra")); }
