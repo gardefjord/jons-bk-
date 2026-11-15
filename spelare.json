@@ -2,12 +2,12 @@
  "_hjalp": "Redigera här på GitHub. 'utnamningar' är en lista med text, t.ex. [\"Årets hjärta 2026\"]. Ett kort per kortserie i 'kort'. Siffrorna är avlästa från korten.",
  "serier": [
   {
-   "id": "2026",
-   "namn": "2026"
+   "id": "2024",
+   "namn": "2024"
   },
   {
-   "id": "stal",
-   "namn": "Stålkortet"
+   "id": "2026",
+   "namn": "2026"
   },
   {
    "id": "guld",
@@ -53,9 +53,9 @@
      ]
     },
     {
-     "serie": "stal",
+     "serie": "2024",
      "pos": "RW",
-     "bild": "assets/kort/stal/anton.jpg",
+     "bild": "assets/kort/2024/anton.jpg",
      "stats": [
       [
        "Fart",
@@ -88,7 +88,7 @@
    "superkraft": {
     "namn": "Juninhos anda",
     "text": "Gör mål på varje frispark.",
-    "serie": "stal"
+    "serie": "2024"
    }
   },
   {
@@ -129,9 +129,9 @@
      ]
     },
     {
-     "serie": "stal",
+     "serie": "2024",
      "pos": "CM",
-     "bild": "assets/kort/stal/fabian.jpg",
+     "bild": "assets/kort/2024/fabian.jpg",
      "stats": [
       [
        "Fart",
@@ -164,7 +164,7 @@
    "superkraft": {
     "namn": "Hög spelintelligens",
     "text": "Hittar en lösning på alla knepiga lägen.",
-    "serie": "stal"
+    "serie": "2024"
    }
   },
   {
@@ -205,9 +205,9 @@
      ]
     },
     {
-     "serie": "stal",
+     "serie": "2024",
      "pos": "CM",
-     "bild": "assets/kort/stal/john.jpg",
+     "bild": "assets/kort/2024/john.jpg",
      "stats": [
       [
        "Fart",
@@ -240,7 +240,7 @@
    "superkraft": {
     "namn": "Bigfoot",
     "text": "Blockerar vad som helst med bara en fot.",
-    "serie": "stal"
+    "serie": "2024"
    }
   },
   {
@@ -281,9 +281,9 @@
      ]
     },
     {
-     "serie": "stal",
+     "serie": "2024",
      "pos": "RB",
-     "bild": "assets/kort/stal/theo.jpg",
+     "bild": "assets/kort/2024/theo.jpg",
      "stats": [
       [
        "Fart",
@@ -316,7 +316,7 @@
    "superkraft": {
     "namn": "Terrier-mentalitet",
     "text": "Springer ikapp precis vilken motståndare som helst.",
-    "serie": "stal"
+    "serie": "2024"
    }
   },
   {
@@ -357,9 +357,9 @@
      ]
     },
     {
-     "serie": "stal",
+     "serie": "2024",
      "pos": "GK",
-     "bild": "assets/kort/stal/erkan.jpg",
+     "bild": "assets/kort/2024/erkan.jpg",
      "stats": [
       [
        "Reflexer",
@@ -392,7 +392,7 @@
    "superkraft": {
     "namn": "Goose-slaughter",
     "text": "Blir så zen att alla skott räddas.",
-    "serie": "stal"
+    "serie": "2024"
    }
   },
   {
@@ -433,9 +433,9 @@
      ]
     },
     {
-     "serie": "stal",
+     "serie": "2024",
      "pos": "CM",
-     "bild": "assets/kort/stal/jon.jpg",
+     "bild": "assets/kort/2024/jon.jpg",
      "stats": [
       [
        "Fart",
@@ -468,7 +468,7 @@
    "superkraft": {
     "namn": "Kraftskott",
     "text": "Kan skjuta bollen med enorm kraft.",
-    "serie": "stal"
+    "serie": "2024"
    }
   },
   {
@@ -509,9 +509,9 @@
      ]
     },
     {
-     "serie": "stal",
+     "serie": "2024",
      "pos": "CB",
-     "bild": "assets/kort/stal/jerka.jpg",
+     "bild": "assets/kort/2024/jerka.jpg",
      "stats": [
       [
        "Fart",
@@ -544,7 +544,7 @@
    "superkraft": {
     "namn": "Extremt långa ben",
     "text": "Kan glidtackla bollen från alla vinklar.",
-    "serie": "stal"
+    "serie": "2024"
    }
   },
   {
@@ -585,9 +585,9 @@
      ]
     },
     {
-     "serie": "stal",
+     "serie": "2024",
      "pos": "LW",
-     "bild": "assets/kort/stal/vincent.jpg",
+     "bild": "assets/kort/2024/vincent.jpg",
      "stats": [
       [
        "Fart",
@@ -620,7 +620,7 @@
    "superkraft": {
     "namn": "Nerver av stål",
     "text": "Gör alltid elasticon, även under press.",
-    "serie": "stal"
+    "serie": "2024"
    }
   },
   {
@@ -661,9 +661,9 @@
      ]
     },
     {
-     "serie": "stal",
+     "serie": "2024",
      "pos": "LB",
-     "bild": "assets/kort/stal/matteo.jpg",
+     "bild": "assets/kort/2024/matteo.jpg",
      "stats": [
       [
        "Fart",
@@ -727,7 +727,7 @@
    "superkraft": {
     "namn": "Italiensk högerfot",
     "text": "Träffar varje långpass.",
-    "serie": "stal"
+    "serie": "2024"
    }
   },
   {
@@ -777,9 +777,9 @@
    "flagga": "🇸🇪",
    "kort": [
     {
-     "serie": "stal",
+     "serie": "2024",
      "pos": "ST",
-     "bild": "assets/kort/stal/jorn.jpg",
+     "bild": "assets/kort/2024/jorn.jpg",
      "stats": [
       [
        "Fart",
@@ -812,7 +812,7 @@
    "superkraft": {
     "namn": "Beast mode",
     "text": "Tröttnar aldrig på att jaga bollen.",
-    "serie": "stal"
+    "serie": "2024"
    }
   },
   {
@@ -822,9 +822,9 @@
    "flagga": "🇩🇰",
    "kort": [
     {
-     "serie": "stal",
+     "serie": "2024",
      "pos": "ST",
-     "bild": "assets/kort/stal/simon.jpg",
+     "bild": "assets/kort/2024/simon.jpg",
      "stats": [
       [
        "Fart",
@@ -857,7 +857,7 @@
    "superkraft": {
     "namn": "Inzaghi-blick",
     "text": "Kan göra mål på vilken chans som helst.",
-    "serie": "stal"
+    "serie": "2024"
    }
   },
   {
@@ -867,9 +867,9 @@
    "flagga": "🇳🇴",
    "kort": [
     {
-     "serie": "stal",
+     "serie": "2024",
      "pos": "LB",
-     "bild": "assets/kort/stal/lukas.jpg",
+     "bild": "assets/kort/2024/lukas.jpg",
      "stats": [
       [
        "Fart",
@@ -902,7 +902,7 @@
    "superkraft": {
     "namn": "Pirlo-skott",
     "text": "Kurvar in bollen i nätet från planens mitt.",
-    "serie": "stal"
+    "serie": "2024"
    }
   },
   {
@@ -912,9 +912,9 @@
    "flagga": "🇸🇪",
    "kort": [
     {
-     "serie": "stal",
+     "serie": "2024",
      "pos": "RB",
-     "bild": "assets/kort/stal/gustav.jpg",
+     "bild": "assets/kort/2024/gustav.jpg",
      "stats": [
       [
        "Fart",
@@ -947,7 +947,7 @@
    "superkraft": {
     "namn": "Ger aldrig upp",
     "text": "Vinner tillbaka bollen i vilket läge som helst.",
-    "serie": "stal"
+    "serie": "2024"
    }
   },
   {
@@ -957,9 +957,9 @@
    "flagga": "🇸🇪",
    "kort": [
     {
-     "serie": "stal",
+     "serie": "2024",
      "pos": "LW",
-     "bild": "assets/kort/stal/erik.jpg",
+     "bild": "assets/kort/2024/erik.jpg",
      "stats": [
       [
        "Fart",
@@ -992,7 +992,7 @@
    "superkraft": {
     "namn": "Lagspelare",
     "text": "Hittar alltid passningen till en lagkamrat som kan göra mål.",
-    "serie": "stal"
+    "serie": "2024"
    }
   },
   {
@@ -1002,9 +1002,9 @@
    "flagga": "🇸🇪",
    "kort": [
     {
-     "serie": "stal",
+     "serie": "2024",
      "pos": "RB",
-     "bild": "assets/kort/stal/adam-jarnpanna.jpg",
+     "bild": "assets/kort/2024/adam-jarnpanna.jpg",
      "stats": [
       [
        "Fart",
@@ -1037,7 +1037,7 @@
    "superkraft": {
     "namn": "Järnpanna",
     "text": "Nickar bollen extremt hårt.",
-    "serie": "stal"
+    "serie": "2024"
    }
   },
   {
@@ -1047,9 +1047,9 @@
    "flagga": "🇸🇪",
    "kort": [
     {
-     "serie": "stal",
+     "serie": "2024",
      "pos": "RB",
-     "bild": "assets/kort/stal/adam-okocha.jpg",
+     "bild": "assets/kort/2024/adam-okocha.jpg",
      "stats": [
       [
        "Fart",
@@ -1082,7 +1082,7 @@
    "superkraft": {
     "namn": "Okocha-fötter",
     "text": "Klarar sig med en dribbling i vilket läge som helst.",
-    "serie": "stal"
+    "serie": "2024"
    }
   }
  ]

@@ -19,8 +19,7 @@ var RES = { W: ["V", "Vinst"], D: ["O", "Oavgjort"], L: ["L", "Lärdom"] };
 
 /* ---------- grafik ---------- */
 var DEFS = '<svg width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="wob" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency=".022" numOctaves="2" seed="4"/><feDisplacementMap in="SourceGraphic" scale="4.5"/></filter></svg>';
-var HEART = '<img class="heart" src="assets/logo/jons-bk-roed.png" width="170" height="169" alt="Jons BK-loggan: ett handritat hjärta med texten JONS BK">';
-var NAV = [["start", "Start", "index.html"], ["matcher", "Matcher", "matcher.html"], ["laget", "Laget", "laget.html"], ["galleri", "Galleri", "galleri.html"], ["om-oss", "Om oss", "om-oss.html"]];
+var NAV = [["start", "Start", "index.html"], ["matcher", "Matcher", "matcher.html"], ["laget", "Laget", "laget.html"]];
 
 /* ---------- gemensam ram ---------- */
 function frame(inner, d) {
@@ -93,12 +92,10 @@ var DEMO = '<p class="note">Resultaten och tabellen här är exempel för att vi
 function pageStart(s) {
   var L = lists(s), h = (s.demo ? DEMO : "") + nextCard(s, L.next) + upcoming(s, L.later);
   if (L.done.length) h += sec("Formen just nu", formRow(L.done).replace(/^<p class="form">/, '<p class="form" style="border:0;margin:0">') + '<p class="fine">V = vinst, O = oavgjort, L = lärdom. Varje match är ett tillfälle att spela fotboll tillsammans.</p>');
-  h += sec("Välkommen", '<div class="prose"><p>Jons BK spelar sjumannafotboll i Korpen Stockholm. Här samlar vi matcherna, tabellen och oss själva, på det sätt som passar oss bäst: med värme, glädje och bollen som rullar.</p><p>Fotboll är vackert. Det är ännu vackrare tillsammans, och alla får vara med.</p></div>');
   h += '<section class="sec"><h2>Utforska</h2><div class="panel"><ul class="tiles">' +
     '<li><a href="matcher.html"><div><b>Matcher &amp; tabell</b><span>Resultat, kommande matcher och ställning</span></div><i>&rarr;</i></a></li>' +
     '<li><a href="laget.html"><div><b>Laget</b><span>Ett spelarkort med superkraft för varje hjärta</span></div><i>&rarr;</i></a></li>' +
-    '<li><a href="galleri.html"><div><b>Galleri</b><span>Bilder och minnen</span></div><i>&rarr;</i></a></li>' +
-    '<li><a href="om-oss.html"><div><b>Om oss</b><span>Vad Jons BK handlar om</span></div><i>&rarr;</i></a></li></ul></div></section>';
+    '</ul></div></section>';
   frame(h, s);
 }
 function pageMatcher(s) {
@@ -110,6 +107,7 @@ function pageMatcher(s) {
 var POS = { ST: "Anfallare", LW: "Vänsterytter", RW: "Högerytter", CM: "Central mittfältare", LB: "Vänsterback", RB: "Högerback", CB: "Mittback", MB: "Mittback", GK: "Målvakt" };
 var PL = null, SERIES = [], cur = null, curSerie = null;
 function seriesName(id) { var s = SERIES.filter(function (x) { return x.id === id; })[0]; return s ? s.namn : id; }
+function order(p) { var ids = SERIES.map(function (s) { return s.id; }); return p.kort.slice().sort(function (a, b) { return ids.indexOf(a.serie) - ids.indexOf(b.serie); }); }
 function pick(p, id) { return p.kort.filter(function (k) { return k.serie === id; })[0] || p.kort[0]; }
 function tile(p) {
   var k = pick(p, "2026");
@@ -132,9 +130,9 @@ function openPlayer(id) {
   curSerie = pick(cur, "2026").serie;
   var h = '<div class="ph"><div><h3 id="dn">' + esc(cur.namn) + ' ' + esc(cur.flagga || "") + '</h3><small id="dpos"></small></div><button class="btn sm" data-close>Stäng</button></div><div class="pb">';
   h += '<div class="pimg"><img id="dimg" alt=""></div>';
-  h += '<div class="chips" role="group" aria-label="Kortserie">' + cur.kort.map(function (k) { return '<button class="chip" data-s="' + esc(k.serie) + '" aria-pressed="false">' + esc(seriesName(k.serie)) + '</button>'; }).join("") + '</div>';
+  h += '<div class="chips" role="group" aria-label="Kortserie">' + order(cur).map(function (k) { return '<button class="chip" data-s="' + esc(k.serie) + '" aria-pressed="false">' + esc(seriesName(k.serie)) + '</button>'; }).join("") + '</div>';
   h += '<h4>Så har kortet växt</h4><ul class="bars" id="dbars"></ul>';
-  if (cur.superkraft) h += '<h4>Superkraft (' + esc(seriesName(cur.superkraft.serie || "stal")) + ')</h4><div class="kraft"><b>' + esc(cur.superkraft.namn) + '</b>' + esc(cur.superkraft.text) + '</div>';
+  if (cur.superkraft) h += '<h4>Superkraft (' + esc(seriesName(cur.superkraft.serie || "2024")) + ')</h4><div class="kraft"><b>' + esc(cur.superkraft.namn) + '</b>' + esc(cur.superkraft.text) + '</div>';
   h += '<h4>Utmärkelser</h4><ul class="awards">' + ((cur.utnamningar || []).length ? cur.utnamningar.map(function (u) { return '<li>' + esc(u) + '</li>'; }).join("") : '<li>Här samlas utmärkelserna. Alla är nominerade.</li>') + '</ul>';
   h += '<div class="lovemeter">Kärlek 100 av 100<div class="bar" role="img" aria-label="Kärlek: 100 av 100"></div></div></div>';
   $("dlg").innerHTML = h; $("dlg").showModal(); showSerie(curSerie);
@@ -145,31 +143,22 @@ function showSerie(sid) {
   $("dpos").textContent = (POS[k.pos] || k.pos) + " · " + seriesName(k.serie);
   document.querySelectorAll("#dlg .chip").forEach(function (c) { c.setAttribute("aria-pressed", c.dataset.s === k.serie ? "true" : "false"); });
   var ul = $("dbars"), same = ul.children.length === k.stats.length && Array.prototype.every.call(ul.children, function (li, i) { return li.dataset.l === k.stats[i][0]; });
-  if (!same) ul.innerHTML = k.stats.map(function (s) { return '<li data-l="' + esc(s[0]) + '"><span>' + esc(s[0]) + '</span><div class="bar"><i style="width:0"></i></div><b></b></li>'; }).join("");
+  if (!same) ul.innerHTML = k.stats.map(function (s) { return '<li data-l="' + esc(s[0]) + '"><span></span><div class="bar"><i style="width:0"></i></div><b></b></li>'; }).join("");
+  /* växtmarkeringar: bara uppåt, jämfört med närmast tidigare kortserie med årtal */
+  var yrs = order(cur).filter(function (x) { return /^\d{4}$/.test(x.serie); }), pi = yrs.indexOf(k), prev = pi > 0 ? yrs[pi - 1] : null;
+  Array.prototype.forEach.call(ul.children, function (li, i) {
+    var lab = k.stats[i][0], was = prev && prev.stats.filter(function (s) { return s[0] === lab; })[0], up = was ? k.stats[i][1] - was[1] : 0;
+    li.querySelector("span").innerHTML = esc(lab) + (up > 0 ? '<em title="Upp från ' + esc(prev.serie) + '">+' + up + ' &hearts;</em>' : "");
+  });
   requestAnimationFrame(function () { requestAnimationFrame(function () {
     Array.prototype.forEach.call(ul.children, function (li, i) { li.querySelector("i").style.width = k.stats[i][1] + "%"; li.querySelector("b").textContent = k.stats[i][1]; });
   }); });
-}
-
-/* ---------- galleri ---------- */
-function pageGalleri(d, data) {
-  var fig = data.foton.map(function (f) { return '<figure><img src="' + esc(f.src) + '" alt="' + esc(f.alt) + '" loading="lazy"><figcaption>' + esc(f.text) + '</figcaption></figure>'; }).join("");
-  frame(sec("Galleri", '<div class="prose"><p>Små stunder från Jons BK. Fler bilder är alltid välkomna.</p></div><div class="gal">' + fig + '</div><p class="fine">Alla spelarkort hittar du under <a href="laget.html">Laget</a>.</p>'), d);
-}
-
-/* ---------- om oss ---------- */
-function pageOmOss(d) {
-  var h = sec("Om Jons BK", HEART + '<div class="prose"><p>Jons BK är ett fotbollslag som spelar sjumannafotboll i Korpen Stockholm, ' + esc(d.league) + ', med ' + esc(d.venue) + ' som hemmaplan. Vi spelar för glädjen, för gemenskapen och för att fotboll är vackert.</p><p>Här är vi glada för varandras insatser, hejar på varandra och firar både stora och små ögonblick. Fotboll är till för alla, oavsett nivå, bakgrund eller dagsform, och alla som vill spela boll får plats i vårt hjärta.</p></div><ul class="values"><li>Jons är kärlek</li><li>Passa bollen, passa kärleken</li><li>Fotboll är vackert</li></ul>');
-  h += sec("Följ ligan", '<div class="prose"><p>Den officiella tabellen och alla matcher i serien finns hos Korpen Stockholm: <a href="https://korpenstockholm.zoezi.se/serie/8346">Division 2 på korpenstockholm.zoezi.se</a>. Resultaten här på sidan uppdateras automatiskt därifrån.</p></div>');
-  frame(h, d);
 }
 
 /* ---------- start ---------- */
 var JOBS = {
   "start": function () { return getJson("data.json").then(pageStart); },
   "matcher": function () { return getJson("data.json").then(pageMatcher); },
-  "laget": function () { return Promise.all([getJson("data.json"), getJson("spelare.json")]).then(function (r) { pageLaget(r[0], r[1]); }); },
-  "galleri": function () { return Promise.all([getJson("data.json"), getJson("galleri.json")]).then(function (r) { pageGalleri(r[0], r[1]); }); },
-  "om-oss": function () { return getJson("data.json").then(pageOmOss); }
+  "laget": function () { return Promise.all([getJson("data.json"), getJson("spelare.json")]).then(function (r) { pageLaget(r[0], r[1]); }); }
 };
 (JOBS[PAGE] || JOBS.start)().catch(fail);
