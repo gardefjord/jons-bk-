@@ -2,7 +2,7 @@
 var US = "Jons BK";
 var $ = function (id) { return document.getElementById(id); };
 var root = $("root");
-var PAGE = document.body.dataset.page;
+var PAGE = document.body.dataset.page || (/matcher/.test(location.pathname) ? "matcher" : /laget/.test(location.pathname) ? "laget" : "start");
 
 function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
 function getJson(url) { return fetch(url, { cache: "no-store" }).then(function (r) { if (!r.ok) throw new Error(url); return r.json(); }); }
@@ -18,18 +18,18 @@ function resOf(m) { var a = +m.gf, b = +m.ga; return a > b ? "W" : a < b ? "L" :
 var RES = { W: ["V", "Vinst"], D: ["O", "Oavgjort"], L: ["L", "Lärdom"] };
 
 /* ---------- grafik ---------- */
-var DEFS = '<svg width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="wob" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency=".022" numOctaves="2" seed="4"/><feDisplacementMap in="SourceGraphic" scale="4.5"/></filter></svg>';
+var TITLES = { "start": "Start", "matcher": "Matcher", "laget": "Laget" };
 var NAV = [["start", "Start", "index.html"], ["matcher", "Matcher", "matcher.html"], ["laget", "Laget", "laget.html"]];
 
 /* ---------- gemensam ram ---------- */
 function frame(inner, d) {
   d = d || {};
-  var h = DEFS + '<div class="wrap">';
-  h += '<header class="mast"><a href="index.html" class="logo"><img src="assets/logo/jons-bk-rosa.png" width="118" height="117" alt="Jons BK, till startsidan"></a><div><h1><a href="index.html">Jons BK</a></h1><p>Korpen Stockholm' + (d.league ? ', ' + esc(d.league) : '') + '</p></div></header>';
-  h += '<div class="ticker" aria-hidden="true"><span>Jons är kärlek <b>&hearts;</b> Söndagar på ' + esc(d.venue || "Långholmens BP") + ' <b>&hearts;</b> Passa bollen, passa kärleken <b>&hearts;</b> Alla får vara med <b>&hearts;</b> Styrka 95, kärlek 100 <b>&hearts;</b> Fotboll är vackert <b>&hearts;</b></span></div>';
+  var h = '<div class="wrap">';
+  var logo = '<a href="index.html" class="logo"><img src="assets/logo/jons-bk-rosa.png" width="230" height="229" alt="Jons BK, till startsidan"></a>';
+  h += '<header class="mast' + (PAGE === "start" ? ' home' : '') + '">' + logo + '</header>';
   h += '<nav aria-label="Huvudmeny"><ul class="nav">' + NAV.map(function (n) { return '<li><a href="' + n[2] + '"' + (n[0] === PAGE ? ' aria-current="page"' : '') + '>' + n[1] + '</a></li>'; }).join("") + '</ul></nav>';
-  h += '<main>' + inner + '</main>';
-  h += '<footer class="foot"><img src="assets/logo/jons-bk-rosa.png" width="120" height="119" alt=""><p class="love">Jons är kärlek</p><small>Gjord med kärlek &hearts; Matcher och tabell från Korpen Stockholm</small></footer></div>';
+  h += '<main>' + (PAGE === "start" ? '<h1 class="sr">Jons BK</h1>' : '<h1 class="pagetitle">' + esc(TITLES[PAGE] || "") + '</h1>') + inner + '</main>';
+  h += '<footer class="foot"><img src="assets/logo/jons-bk-rosa.png" width="44" height="44" alt=""><p class="love">Jons är kärlek</p><small>Matcher och tabell från Korpen Stockholm</small></footer></div>';
   root.innerHTML = h;
 }
 function fail() { frame('<p class="note">Vi kunde inte hämta sidans innehåll just nu. Försök igen om en stund, så rullar bollen vidare.</p>'); }
@@ -44,7 +44,7 @@ function lists(s) {
 }
 function nextCard(s, next) {
   var h = '<section aria-labelledby="h-next"><div class="card">';
-  h += '<h2 class="nameplate" id="h-next"><span class="yr">2026</span>Nästa match</h2>';
+  h += '<h2 class="nameplate" id="h-next">Nästa match</h2>';
   if (next) {
     var d = when(next);
     h += '<div class="scene"><span class="sticker">' + esc(countdown(d)) + '</span><div class="versus"><span class="us">Jons BK</span><span class="vs">mot</span><span class="them">' + esc(next.opp) + '</span></div></div>';
@@ -68,11 +68,15 @@ function formRow(done) {
   done.slice(0, 5).reverse().forEach(function (m) { h += chip(resOf(m)); });
   return h + '</p>';
 }
+function resRows(list) {
+  var h = '<ul class="rows">';
+  list.forEach(function (m) { var r = resOf(m); h += '<li><span class="when">' + esc(fmtDay(when(m))) + '</span>' + chip(r) + '<span class="opp">' + esc(m.opp) + '</span><span class="score">' + esc(m.gf) + '&ndash;' + esc(m.ga) + '</span></li>'; });
+  return h + '</ul>';
+}
+var LEGEND = '<p class="fine">Jons BK:s mål står alltid först i resultatet. V = vinst, O = oavgjort, L = lärdom.</p>';
 function playedList(done) {
   if (!done.length) return '<p>Inga matcher spelade än den här säsongen. Det bästa är fortfarande på väg.</p>';
-  var h = formRow(done) + '<ul class="rows">';
-  done.forEach(function (m) { var r = resOf(m); h += '<li><span class="when">' + esc(fmtDay(when(m))) + '</span>' + chip(r) + '<span class="opp">' + esc(m.opp) + '</span><span class="score">' + esc(m.gf) + '&ndash;' + esc(m.ga) + '</span></li>'; });
-  return h + '</ul><p class="fine">Jons BK:s mål står alltid först i resultatet. V = vinst, O = oavgjort, L = lärdom.</p>';
+  return formRow(done) + resRows(done) + LEGEND;
 }
 function standings(s) {
   return (s.table || []).map(function (r) {
@@ -89,18 +93,17 @@ function tableHtml(s) {
 }
 var DEMO = '<p class="note">Resultaten och tabellen här är exempel för att visa designen. De riktiga är på väg.</p>';
 
-function pageStart(s) {
+function pageStart(s, pl) {
   var L = lists(s), h = (s.demo ? DEMO : "") + nextCard(s, L.next) + upcoming(s, L.later);
-  if (L.done.length) h += sec("Formen just nu", formRow(L.done).replace(/^<p class="form">/, '<p class="form" style="border:0;margin:0">') + '<p class="fine">V = vinst, O = oavgjort, L = lärdom. Varje match är ett tillfälle att spela fotboll tillsammans.</p>');
-  h += '<section class="sec"><h2>Utforska</h2><div class="panel"><ul class="tiles">' +
-    '<li><a href="matcher.html"><div><b>Matcher &amp; tabell</b><span>Resultat, kommande matcher och ställning</span></div><i>&rarr;</i></a></li>' +
-    '<li><a href="laget.html"><div><b>Laget</b><span>Ett spelarkort med superkraft för varje hjärta</span></div><i>&rarr;</i></a></li>' +
-    '</ul></div></section>';
+  if (L.done.length) h += sec("Senaste resultat", resRows(L.done.slice(0, 5)) + LEGEND + '<p class="more"><a href="matcher.html#spelade">Alla resultat och tabellen <span aria-hidden="true">&rarr;</span></a></p>');
+  if (pl && pl.spelare) {
+    h += '<section class="sec"><h2>Laget</h2><div class="strip">' + pl.spelare.filter(function (p) { return p.grupp === "trupp"; }).map(function (p) { var k = pick(p, "2026"); return '<a href="laget.html#' + esc(p.id) + '"><img src="' + esc(k.bild) + '" width="250" height="390" loading="lazy" alt="' + esc(p.namn) + ', spelarkort"></a>'; }).join("") + '</div><p class="more strip-more"><a href="laget.html">Möt laget <span aria-hidden="true">&rarr;</span></a></p></section>';
+  }
   frame(h, s);
 }
 function pageMatcher(s) {
   var L = lists(s);
-  frame((s.demo ? DEMO : "") + (L.next ? nextCard(s, L.next) : "") + upcoming(s, L.later) + sec("Spelade matcher", playedList(L.done)) + sec("Tabell", tableHtml(s)), s);
+  frame((s.demo ? DEMO : "") + (L.next ? nextCard(s, L.next) : "") + upcoming(s, L.later) + sec("Spelade matcher", playedList(L.done), "spelade") + sec("Tabell", tableHtml(s), "tabell"), s);
 }
 
 /* ---------- laget ---------- */
@@ -109,55 +112,115 @@ var PL = null, SERIES = [], cur = null, curSerie = null;
 function seriesName(id) { var s = SERIES.filter(function (x) { return x.id === id; })[0]; return s ? s.namn : id; }
 function order(p) { var ids = SERIES.map(function (s) { return s.id; }); return p.kort.slice().sort(function (a, b) { return ids.indexOf(a.serie) - ids.indexOf(b.serie); }); }
 function pick(p, id) { return p.kort.filter(function (k) { return k.serie === id; })[0] || p.kort[0]; }
-function tile(p) {
-  var k = pick(p, "2026");
-  return '<li><button class="tile" data-id="' + esc(p.id) + '" aria-label="Öppna spelarkortet för ' + esc(p.namn) + '"><img src="' + esc(k.bild) + '" width="250" height="390" loading="lazy" alt="' + esc(p.namn) + ', ' + esc((POS[k.pos] || k.pos).toLowerCase()) + ', Jons BK spelarkort"><b>' + esc(p.namn) + '</b><small>' + esc(POS[k.pos] || k.pos) + '</small><span class="pt">&hearts; 100</span></button></li>';
-}
 function pageLaget(d, data) {
   PL = data.spelare; SERIES = data.serier || [];
+  function names(list) { return list.map(function (p) { return '<li><button type="button" data-id="' + esc(p.id) + '" aria-pressed="false">' + esc(p.namn) + '</button></li>'; }).join(""); }
   var trupp = PL.filter(function (p) { return p.grupp === "trupp"; }), vanner = PL.filter(function (p) { return p.grupp !== "trupp"; });
-  var h = '<p class="prose" style="margin:0 0 4px">Tryck på ett kort för att se superkraft, utmärkelser och hur korten har växt genom åren.</p>';
-  h += sec("Truppen 2026", '<ul class="grid">' + trupp.map(tile).join("") + '</ul>');
-  if (vanner.length) h += sec("Fler som delat bollen med oss", '<ul class="grid">' + vanner.map(tile).join("") + '</ul>');
-  h += '<dialog class="spelare" id="dlg" aria-labelledby="dn"></dialog>';
+  var h = '<nav class="index" aria-label="Välj spelare"><p class="idx">Truppen 2026</p><ul class="names">' + names(trupp) + '</ul>' + (vanner.length ? '<p class="idx">Fler som delat bollen med oss</p><ul class="names">' + names(vanner) + '</ul>' : '') + '</nav>';
+  h += '<div class="stage" id="stage"><button type="button" class="arrow" data-step="-1" aria-label="Föregående spelare">&larr;</button><img id="dimg" alt=""><button type="button" class="arrow" data-step="1" aria-label="Nästa spelare">&rarr;</button></div>';
+  h += '<p class="count" id="count" aria-live="polite"></p>';
+  h += '<div class="who" id="who"><h2 id="dn"></h2><p id="dpos"></p></div>';
+  h += '<div class="detail"><div class="chips" id="chips" role="group" aria-label="Kortserie"></div>' +
+    '<h4 id="sh"></h4><p class="legend" id="legend"></p><ul class="bars" id="dbars"></ul>' +
+    '<div id="extra"></div>' +
+    '<div class="lovemeter">Kärlek 100 av 100<div class="bar" role="img" aria-label="Kärlek: 100 av 100"></div></div></div>';
   frame(h, d);
-  root.addEventListener("click", function (e) { var b = e.target.closest(".tile"); if (b) openPlayer(b.dataset.id); });
-  var dlg = $("dlg");
-  dlg.addEventListener("click", function (e) { if (e.target === dlg || e.target.closest("[data-close]")) dlg.close(); var c = e.target.closest(".chip"); if (c) showSerie(c.dataset.s); });
-}
-function openPlayer(id) {
-  cur = PL.filter(function (p) { return p.id === id; })[0]; if (!cur) return;
-  curSerie = pick(cur, "2026").serie;
-  var h = '<div class="ph"><div><h3 id="dn">' + esc(cur.namn) + ' ' + esc(cur.flagga || "") + '</h3><small id="dpos"></small></div><button class="btn sm" data-close>Stäng</button></div><div class="pb">';
-  h += '<div class="pimg"><img id="dimg" alt=""></div>';
-  h += '<div class="chips" role="group" aria-label="Kortserie">' + order(cur).map(function (k) { return '<button class="chip" data-s="' + esc(k.serie) + '" aria-pressed="false">' + esc(seriesName(k.serie)) + '</button>'; }).join("") + '</div>';
-  h += '<h4>Så har kortet växt</h4><ul class="bars" id="dbars"></ul>';
-  if (cur.superkraft) h += '<h4>Superkraft (' + esc(seriesName(cur.superkraft.serie || "2024")) + ')</h4><div class="kraft"><b>' + esc(cur.superkraft.namn) + '</b>' + esc(cur.superkraft.text) + '</div>';
-  h += '<h4>Utmärkelser</h4><ul class="awards">' + ((cur.utnamningar || []).length ? cur.utnamningar.map(function (u) { return '<li>' + esc(u) + '</li>'; }).join("") : '<li>Här samlas utmärkelserna. Alla är nominerade.</li>') + '</ul>';
-  h += '<div class="lovemeter">Kärlek 100 av 100<div class="bar" role="img" aria-label="Kärlek: 100 av 100"></div></div></div>';
-  $("dlg").innerHTML = h; $("dlg").showModal(); showSerie(curSerie);
-}
-function showSerie(sid) {
-  var k = pick(cur, sid); curSerie = k.serie;
-  var img = $("dimg"); img.src = k.bild; img.alt = cur.namn + ", " + (POS[k.pos] || k.pos).toLowerCase() + ", kortserie " + seriesName(k.serie);
-  $("dpos").textContent = (POS[k.pos] || k.pos) + " · " + seriesName(k.serie);
-  document.querySelectorAll("#dlg .chip").forEach(function (c) { c.setAttribute("aria-pressed", c.dataset.s === k.serie ? "true" : "false"); });
-  var ul = $("dbars"), same = ul.children.length === k.stats.length && Array.prototype.every.call(ul.children, function (li, i) { return li.dataset.l === k.stats[i][0]; });
-  if (!same) ul.innerHTML = k.stats.map(function (s) { return '<li data-l="' + esc(s[0]) + '"><span></span><div class="bar"><i style="width:0"></i></div><b></b></li>'; }).join("");
-  /* växtmarkeringar: bara uppåt, jämfört med närmast tidigare kortserie med årtal */
-  var yrs = order(cur).filter(function (x) { return /^\d{4}$/.test(x.serie); }), pi = yrs.indexOf(k), prev = pi > 0 ? yrs[pi - 1] : null;
-  Array.prototype.forEach.call(ul.children, function (li, i) {
-    var lab = k.stats[i][0], was = prev && prev.stats.filter(function (s) { return s[0] === lab; })[0], up = was ? k.stats[i][1] - was[1] : 0;
-    li.querySelector("span").innerHTML = esc(lab) + (up > 0 ? '<em title="Upp från ' + esc(prev.serie) + '">+' + up + ' &hearts;</em>' : "");
+  root.addEventListener("click", function (e) {
+    var n = e.target.closest(".names button"); if (n) return select(n.dataset.id);
+    var s = e.target.closest("[data-step]"); if (s) return step(+s.dataset.step);
+    var c = e.target.closest(".chip"); if (c) showSerie(c.dataset.s, 0);
   });
+  document.addEventListener("keydown", function (e) {
+    if (e.target.closest("input,textarea,select")) return;
+    if (e.key === "ArrowLeft") step(-1); else if (e.key === "ArrowRight") step(1);
+  });
+  var sx = null, st = $("stage");
+  st.addEventListener("touchstart", function (e) { sx = e.touches[0].clientX; }, { passive: true });
+  st.addEventListener("touchend", function (e) { if (sx === null) return; var dx = e.changedTouches[0].clientX - sx; sx = null; if (Math.abs(dx) > 40) step(dx < 0 ? 1 : -1); }, { passive: true });
+  window.addEventListener("hashchange", function () { var id = location.hash.slice(1); if (id && (!cur || cur.id !== id)) select(id, true); });
+  var start = location.hash.slice(1);
+  select(PL.some(function (p) { return p.id === start; }) ? start : PL[0].id, true);
+}
+function step(n) { var i = PL.indexOf(cur) + n; select(PL[(i + PL.length) % PL.length].id); }
+function replay(el) { el.classList.remove("swap"); void el.offsetWidth; el.classList.add("swap"); }
+function yearCards(p) { return order(p).filter(function (x) { return /^\d{4}$/.test(x.serie); }); }
+function select(id, quiet) {
+  var p = PL.filter(function (x) { return x.id === id; })[0]; if (!p || p === cur) return;
+  var dir = cur ? (PL.indexOf(p) > PL.indexOf(cur) ? 1 : -1) : 0;
+  cur = p;
+  document.querySelectorAll(".names button").forEach(function (b) { b.setAttribute("aria-pressed", b.dataset.id === id ? "true" : "false"); });
+  $("count").textContent = (PL.indexOf(cur) + 1) + " / " + PL.length;
+  $("dn").innerHTML = esc(cur.namn) + ' ' + esc(cur.flagga || "");
+  $("chips").innerHTML = order(cur).map(function (k) { return '<button type="button" class="chip" data-s="' + esc(k.serie) + '" aria-pressed="false">' + esc(seriesName(k.serie)) + '</button>'; }).join("");
+  var x = "";
+  if (cur.superkraft) x += '<h4>Superkraft (' + esc(seriesName(cur.superkraft.serie || "2024")) + ')</h4><div class="kraft"><b>' + esc(cur.superkraft.namn) + '</b>' + esc(cur.superkraft.text) + '</div>';
+  if (cur.forebild && cur.forebild.namn) x += '<h4>Spelar i samma anda som</h4><p class="proname">' + esc(cur.forebild.namn) + '</p>';
+  x += '<h4>Utmärkelser</h4><ul class="awards">' + ((cur.utnamningar || []).length ? cur.utnamningar.map(function (u) { return '<li>' + esc(u) + '</li>'; }).join("") : '<li>Här samlas utmärkelserna. Alla är nominerade.</li>') + '</ul>';
+  $("extra").innerHTML = x;
+  if (dir) { replay($("who")); replay($("extra")); }
+  var ys = yearCards(cur);
+  showSerie((ys.length ? ys[ys.length - 1] : cur.kort[0]).serie, dir);
+  if (!quiet) { try { history.replaceState(null, "", "#" + id); } catch (e) {} }
+}
+var imgTok = 0;
+function swapImg(src, alt, dir) {
+  var img = $("dimg"), tok = ++imgTok;
+  if (!img.getAttribute("src")) { img.src = src; img.alt = alt; return; }
+  if (img.getAttribute("src") === src) return;
+  var pre = new Image(); pre.src = src;
+  img.style.setProperty("--dx", (-dir * 28) + "px"); img.classList.add("out");
+  setTimeout(function () {
+    if (tok !== imgTok) return;
+    function show() { if (tok !== imgTok) return; img.src = src; img.alt = alt; img.classList.add("jump"); img.style.setProperty("--dx", (dir * 28) + "px"); void img.offsetWidth; img.classList.remove("jump"); img.classList.remove("out"); }
+    if (pre.complete) show(); else { pre.onload = show; pre.onerror = show; }
+  }, 170);
+}
+function countTo(el, to) {
+  var from = +el.textContent || 0; if (from === to) { el.textContent = to; return; }
+  if (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) { el.textContent = to; return; }
+  var t0 = null; el._to = to;
+  function tick(t) { if (el._to !== to) return; if (!t0) t0 = t; var k = Math.min(1, (t - t0) / 500), e = 1 - Math.pow(1 - k, 3); el.textContent = Math.round(from + (to - from) * e); if (k < 1) requestAnimationFrame(tick); }
+  requestAnimationFrame(tick);
+}
+/* Statistik: har spelaren kort från flera år visas åren under varandra för varje värde, så att utvecklingen syns direkt. */
+function showSerie(sid, dir) {
+  var k = pick(cur, sid); curSerie = k.serie;
+  swapImg(k.bild, cur.namn + ", " + (POS[k.pos] || k.pos).toLowerCase() + ", kortserie " + seriesName(k.serie), dir || 0);
+  $("dpos").textContent = (POS[k.pos] || k.pos) + " · " + seriesName(k.serie);
+  document.querySelectorAll("#chips .chip").forEach(function (c) { c.setAttribute("aria-pressed", c.dataset.s === k.serie ? "true" : "false"); });
+  var ys = yearCards(cur), compare = ys.length > 1 && ys.indexOf(k) >= 0, cards = compare ? ys : [k], last = cards[cards.length - 1];
+  var rows = last.stats.map(function (s) { return s[0]; });
+  cards.forEach(function (c) { c.stats.forEach(function (s) { if (rows.indexOf(s[0]) < 0) rows.push(s[0]); }); });
+  function val(c, lab) { var s = c.stats.filter(function (x) { return x[0] === lab; })[0]; return s ? s[1] : null; }
+  $("sh").textContent = compare ? "Utveckling " + cards[0].serie + " → " + last.serie : "Kortets värden · " + seriesName(k.serie);
+  $("legend").innerHTML = compare ? cards.map(function (c, i) { return '<span class="key k' + (i === cards.length - 1 ? 'new' : 'old') + '"></span>' + esc(c.serie); }).join(" ") : "";
+  var ul = $("dbars"), sig = cards.map(function (c) { return c.serie; }).join("|") + "::" + rows.join("|");
+  if (ul.dataset.sig !== sig) {
+    ul.dataset.sig = sig;
+    ul.innerHTML = rows.map(function (lab) {
+      return '<li><span class="lab">' + esc(lab) + '</span><div class="tracks">' + cards.map(function (c, i) { return '<div class="bar ' + (i === cards.length - 1 ? 'new' : 'old') + '" data-s="' + esc(c.serie) + '"><i style="width:0"></i></div>'; }).join("") + '</div>' +
+        '<span class="nums">' + (compare ? '<small>0</small><span class="arr" aria-hidden="true">→</span>' : '') + '<b>0</b></span><em></em></li>';
+    }).join("");
+    replay(ul);
+  }
+  ul.classList.toggle("compare", compare);
   requestAnimationFrame(function () { requestAnimationFrame(function () {
-    Array.prototype.forEach.call(ul.children, function (li, i) { li.querySelector("i").style.width = k.stats[i][1] + "%"; li.querySelector("b").textContent = k.stats[i][1]; });
+    Array.prototype.forEach.call(ul.children, function (li, r) {
+      var lab = rows[r], vNew = val(last, lab), vOld = compare ? val(cards[0], lab) : null;
+      cards.forEach(function (c, i) { var v = val(c, lab), bar = li.querySelectorAll(".bar")[i]; bar.querySelector("i").style.width = (v === null ? 0 : v) + "%"; bar.classList.toggle("on", c === k); });
+      var b = li.querySelector("b"), sm = li.querySelector("small"), arr = li.querySelector(".arr"), em = li.querySelector("em");
+      if (vNew === null) { b.textContent = "–"; } else countTo(b, vNew);
+      if (sm) { if (vOld === null) { sm.textContent = ""; arr.style.visibility = "hidden"; } else { arr.style.visibility = ""; countTo(sm, vOld); } }
+      var up = (vOld !== null && vNew !== null) ? vNew - vOld : 0;
+      em.textContent = up > 0 ? "+" + up + " ♥" : "";
+      li.setAttribute("aria-label", lab + ": " + (compare && vOld !== null ? cards[0].serie + " " + vOld + ", " + last.serie + " " + (vNew === null ? "saknas" : vNew) : (vNew === null ? "saknas" : vNew)));
+    });
   }); });
 }
 
 /* ---------- start ---------- */
 var JOBS = {
-  "start": function () { return getJson("data.json").then(pageStart); },
+  "start": function () { return Promise.all([getJson("data.json"), getJson("spelare.json").catch(function () { return null; })]).then(function (r) { SERIES = (r[1] && r[1].serier) || []; pageStart(r[0], r[1]); }); },
   "matcher": function () { return getJson("data.json").then(pageMatcher); },
   "laget": function () { return Promise.all([getJson("data.json"), getJson("spelare.json")]).then(function (r) { pageLaget(r[0], r[1]); }); }
 };

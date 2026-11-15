@@ -1,5 +1,5 @@
 {
- "_hjalp": "Redigera här på GitHub. 'utnamningar' är en lista med text, t.ex. [\"Årets hjärta 2026\"]. Ett kort per kortserie i 'kort'. Siffrorna är avlästa från korten.",
+ "_hjalp": "Redigera här på GitHub. 'utnamningar' är en lista med text, t.ex. [\"Årets hjärta 2026\"]. Ett kort per kortserie i 'kort'. 'forebild' är proffset spelaren spelar i samma anda som.",
  "serier": [
   {
    "id": "2024",
@@ -89,6 +89,9 @@
     "namn": "Juninhos anda",
     "text": "Gör mål på varje frispark.",
     "serie": "2024"
+   },
+   "forebild": {
+    "namn": "Juninho Pernambucano"
    }
   },
   {
@@ -165,6 +168,9 @@
     "namn": "Hög spelintelligens",
     "text": "Hittar en lösning på alla knepiga lägen.",
     "serie": "2024"
+   },
+   "forebild": {
+    "namn": "Andrés Iniesta"
    }
   },
   {
@@ -241,6 +247,9 @@
     "namn": "Bigfoot",
     "text": "Blockerar vad som helst med bara en fot.",
     "serie": "2024"
+   },
+   "forebild": {
+    "namn": "Sergio Busquets"
    }
   },
   {
@@ -317,6 +326,9 @@
     "namn": "Terrier-mentalitet",
     "text": "Springer ikapp precis vilken motståndare som helst.",
     "serie": "2024"
+   },
+   "forebild": {
+    "namn": "Carles Puyol"
    }
   },
   {
@@ -393,6 +405,9 @@
     "namn": "Goose-slaughter",
     "text": "Blir så zen att alla skott räddas.",
     "serie": "2024"
+   },
+   "forebild": {
+    "namn": "Gianluigi Buffon"
    }
   },
   {
@@ -469,6 +484,9 @@
     "namn": "Kraftskott",
     "text": "Kan skjuta bollen med enorm kraft.",
     "serie": "2024"
+   },
+   "forebild": {
+    "namn": "Steven Gerrard"
    }
   },
   {
@@ -545,6 +563,9 @@
     "namn": "Extremt långa ben",
     "text": "Kan glidtackla bollen från alla vinklar.",
     "serie": "2024"
+   },
+   "forebild": {
+    "namn": "Patrick Vieira"
    }
   },
   {
@@ -621,6 +642,9 @@
     "namn": "Nerver av stål",
     "text": "Gör alltid elasticon, även under press.",
     "serie": "2024"
+   },
+   "forebild": {
+    "namn": "Ronaldinho"
    }
   },
   {
@@ -728,18 +752,21 @@
     "namn": "Italiensk högerfot",
     "text": "Träffar varje långpass.",
     "serie": "2024"
+   },
+   "forebild": {
+    "namn": "Francesco Totti"
    }
   },
   {
-   "id": "adam",
-   "namn": "Adam",
+   "id": "adam-ga",
+   "namn": "Adam Ga",
    "grupp": "trupp",
    "flagga": "🇸🇪",
    "kort": [
     {
      "serie": "2026",
      "pos": "LW",
-     "bild": "assets/kort/2026/adam.jpg",
+     "bild": "assets/kort/2026/adam-ga.jpg",
      "stats": [
       [
        "Fart",
@@ -766,9 +793,96 @@
        77
       ]
      ]
+    },
+    {
+     "serie": "2024",
+     "pos": "RB",
+     "bild": "assets/kort/2024/adam-ga.jpg",
+     "stats": [
+      [
+       "Fart",
+       92
+      ],
+      [
+       "Dribbling",
+       92
+      ],
+      [
+       "Styrka",
+       88
+      ],
+      [
+       "Skott",
+       90
+      ],
+      [
+       "Passning",
+       86
+      ],
+      [
+       "Uthållighet",
+       78
+      ]
+     ]
     }
    ],
-   "utnamningar": []
+   "utnamningar": [],
+   "superkraft": {
+    "namn": "Okocha-fötter",
+    "text": "Klarar sig med en dribbling i vilket läge som helst.",
+    "serie": "2024"
+   },
+   "forebild": {
+    "namn": "Jay-Jay Okocha"
+   }
+  },
+  {
+   "id": "adam-gu",
+   "namn": "Adam Gu",
+   "grupp": "trupp",
+   "flagga": "🇸🇪",
+   "kort": [
+    {
+     "serie": "2024",
+     "pos": "RB",
+     "bild": "assets/kort/2024/adam-gu.jpg",
+     "stats": [
+      [
+       "Fart",
+       85
+      ],
+      [
+       "Dribbling",
+       75
+      ],
+      [
+       "Styrka",
+       95
+      ],
+      [
+       "Skott",
+       74
+      ],
+      [
+       "Passning",
+       86
+      ],
+      [
+       "Uthållighet",
+       86
+      ]
+     ]
+    }
+   ],
+   "utnamningar": [],
+   "superkraft": {
+    "namn": "Järnpanna",
+    "text": "Nickar bollen extremt hårt.",
+    "serie": "2024"
+   },
+   "forebild": {
+    "namn": "Sergio Ramos"
+   }
   },
   {
    "id": "jorn",
@@ -813,6 +927,9 @@
     "namn": "Beast mode",
     "text": "Tröttnar aldrig på att jaga bollen.",
     "serie": "2024"
+   },
+   "forebild": {
+    "namn": "Carlos Tevez"
    }
   },
   {
@@ -858,6 +975,9 @@
     "namn": "Inzaghi-blick",
     "text": "Kan göra mål på vilken chans som helst.",
     "serie": "2024"
+   },
+   "forebild": {
+    "namn": "Filippo Inzaghi"
    }
   },
   {
@@ -903,6 +1023,9 @@
     "namn": "Pirlo-skott",
     "text": "Kurvar in bollen i nätet från planens mitt.",
     "serie": "2024"
+   },
+   "forebild": {
+    "namn": "Andrea Pirlo"
    }
   },
   {
@@ -948,6 +1071,9 @@
     "namn": "Ger aldrig upp",
     "text": "Vinner tillbaka bollen i vilket läge som helst.",
     "serie": "2024"
+   },
+   "forebild": {
+    "namn": "N'Golo Kanté"
    }
   },
   {
@@ -993,96 +1119,9 @@
     "namn": "Lagspelare",
     "text": "Hittar alltid passningen till en lagkamrat som kan göra mål.",
     "serie": "2024"
-   }
-  },
-  {
-   "id": "adam-jarnpanna",
-   "namn": "Adam (Järnpanna)",
-   "grupp": "vanner",
-   "flagga": "🇸🇪",
-   "kort": [
-    {
-     "serie": "2024",
-     "pos": "RB",
-     "bild": "assets/kort/2024/adam-jarnpanna.jpg",
-     "stats": [
-      [
-       "Fart",
-       85
-      ],
-      [
-       "Dribbling",
-       75
-      ],
-      [
-       "Styrka",
-       95
-      ],
-      [
-       "Skott",
-       74
-      ],
-      [
-       "Passning",
-       86
-      ],
-      [
-       "Uthållighet",
-       86
-      ]
-     ]
-    }
-   ],
-   "utnamningar": [],
-   "superkraft": {
-    "namn": "Järnpanna",
-    "text": "Nickar bollen extremt hårt.",
-    "serie": "2024"
-   }
-  },
-  {
-   "id": "adam-okocha",
-   "namn": "Adam (Okocha)",
-   "grupp": "vanner",
-   "flagga": "🇸🇪",
-   "kort": [
-    {
-     "serie": "2024",
-     "pos": "RB",
-     "bild": "assets/kort/2024/adam-okocha.jpg",
-     "stats": [
-      [
-       "Fart",
-       92
-      ],
-      [
-       "Dribbling",
-       92
-      ],
-      [
-       "Styrka",
-       88
-      ],
-      [
-       "Skott",
-       90
-      ],
-      [
-       "Passning",
-       86
-      ],
-      [
-       "Uthållighet",
-       78
-      ]
-     ]
-    }
-   ],
-   "utnamningar": [],
-   "superkraft": {
-    "namn": "Okocha-fötter",
-    "text": "Klarar sig med en dribbling i vilket läge som helst.",
-    "serie": "2024"
+   },
+   "forebild": {
+    "namn": "Xavi"
    }
   }
  ]
