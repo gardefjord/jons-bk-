@@ -98,7 +98,7 @@ function pageStart(s, pl) {
   var L = lists(s), h = (s.demo ? DEMO : "") + nextCard(s, L.next) + upcoming(s, L.later);
   if (L.done.length) h += sec("Senaste resultat", resRows(L.done.slice(0, 5)) + LEGEND + '<p class="more"><a href="matcher.html#spelade">Alla resultat och tabellen <span aria-hidden="true">&rarr;</span></a></p>');
   if (pl && pl.spelare) {
-    h += '<section class="sec"><h2>Laget</h2><div class="strip">' + pl.spelare.filter(function (p) { return p.grupp === "trupp"; }).map(function (p) { var k = pick(p, "2026"); return '<a href="laget.html"><img src="' + esc(k.bild) + '" width="250" height="390" loading="lazy" alt="' + esc(p.namn) + ', spelarkort"></a>'; }).join("") + '</div><p class="more strip-more"><a href="laget.html">Möt laget <span aria-hidden="true">&rarr;</span></a></p></section>';
+    h += '<section class="sec"><h2>Laget</h2><div class="strip">' + pl.spelare.filter(function (p) { return p.grupp === "trupp"; }).map(function (p) { var k = pick(p, "2026"); return '<a href="laget.html#' + esc(p.id) + '"><img src="' + esc(k.bild) + '" width="250" height="390" loading="lazy" alt="' + esc(p.namn) + ', spelarkort"></a>'; }).join("") + '</div><p class="more strip-more"><a href="laget.html">Möt laget <span aria-hidden="true">&rarr;</span></a></p></section>';
   }
   frame(h, s);
 }
@@ -113,39 +113,42 @@ var PL = null, SERIES = [], cur = null, curSerie = null;
 function seriesName(id) { var s = SERIES.filter(function (x) { return x.id === id; })[0]; return s ? s.namn : id; }
 function order(p) { var ids = SERIES.map(function (s) { return s.id; }); return p.kort.slice().sort(function (a, b) { return ids.indexOf(a.serie) - ids.indexOf(b.serie); }); }
 function pick(p, id) { return p.kort.filter(function (k) { return k.serie === id; })[0] || p.kort[0]; }
-function tile(p) {
-  var k = pick(p, "2026");
-  return '<li><button class="tile" data-id="' + esc(p.id) + '" aria-label="Öppna spelarkortet för ' + esc(p.namn) + '"><img src="' + esc(k.bild) + '" width="250" height="390" loading="lazy" alt="' + esc(p.namn) + ', ' + esc((POS[k.pos] || k.pos).toLowerCase()) + ', Jons BK spelarkort"><b>' + esc(p.namn) + '</b><small>' + esc(POS[k.pos] || k.pos) + '</small><span class="open">Visa kort</span></button></li>';
-}
 function pageLaget(d, data) {
   PL = data.spelare; SERIES = data.serier || [];
+  function names(list) { return list.map(function (p) { return '<li><button type="button" data-id="' + esc(p.id) + '" aria-pressed="false">' + esc(p.namn) + '</button></li>'; }).join(""); }
   var trupp = PL.filter(function (p) { return p.grupp === "trupp"; }), vanner = PL.filter(function (p) { return p.grupp !== "trupp"; });
-  var h = '<p class="prose" style="margin:0 0 4px">Tryck på ett kort för att se superkraft, utmärkelser och hur korten har växt genom åren.</p>';
-  h += sec("Truppen 2026", '<ul class="grid">' + trupp.map(tile).join("") + '</ul>');
-  if (vanner.length) h += sec("Fler som delat bollen med oss", '<ul class="grid">' + vanner.map(tile).join("") + '</ul>');
-  h += '<dialog class="spelare" id="dlg" aria-labelledby="dn"></dialog>';
+  var h = '<nav class="index" aria-label="Välj spelare"><p class="idx">Truppen 2026</p><ul class="names">' + names(trupp) + '</ul>' + (vanner.length ? '<p class="idx">Fler som delat bollen med oss</p><ul class="names">' + names(vanner) + '</ul>' : '') + '</nav>';
+  h += '<div class="stage"><img id="dimg" alt=""></div>';
+  h += '<div class="stagebar"><button type="button" class="btn sm" data-step="-1">&larr; Föregående</button><button type="button" class="btn sm" data-step="1">Nästa &rarr;</button></div>';
+  h += '<div class="who"><h2 id="dn"></h2><p id="dpos"></p></div><div class="detail" id="detail"></div>';
   frame(h, d);
-  root.addEventListener("click", function (e) { var b = e.target.closest(".tile"); if (b) openPlayer(b.dataset.id); });
-  var dlg = $("dlg");
-  dlg.addEventListener("click", function (e) { if (e.target === dlg || e.target.closest("[data-close]")) dlg.close(); var c = e.target.closest(".chip"); if (c) showSerie(c.dataset.s); });
+  root.addEventListener("click", function (e) {
+    var n = e.target.closest(".names button"); if (n) return select(n.dataset.id);
+    var s = e.target.closest("[data-step]"); if (s) { var i = PL.indexOf(cur) + (+s.dataset.step); return select(PL[(i + PL.length) % PL.length].id); }
+    var c = e.target.closest(".chip"); if (c) showSerie(c.dataset.s);
+  });
+  window.addEventListener("hashchange", function () { var id = location.hash.slice(1); if (id && (!cur || cur.id !== id)) select(id, true); });
+  var start = location.hash.slice(1);
+  select(PL.some(function (p) { return p.id === start; }) ? start : PL[0].id, true);
 }
-function openPlayer(id) {
-  cur = PL.filter(function (p) { return p.id === id; })[0]; if (!cur) return;
-  curSerie = pick(cur, "2026").serie;
-  var h = '<div class="ph"><div><h3 id="dn">' + esc(cur.namn) + ' ' + esc(cur.flagga || "") + '</h3><small id="dpos"></small></div><button class="btn sm" data-close>Stäng</button></div><div class="pb">';
-  h += '<div class="pimg"><img id="dimg" alt=""></div>';
-  h += '<div class="chips" role="group" aria-label="Kortserie">' + order(cur).map(function (k) { return '<button class="chip" data-s="' + esc(k.serie) + '" aria-pressed="false">' + esc(seriesName(k.serie)) + '</button>'; }).join("") + '</div>';
+function select(id, quiet) {
+  var p = PL.filter(function (x) { return x.id === id; })[0]; if (!p) return;
+  cur = p; curSerie = pick(cur, "2026").serie;
+  document.querySelectorAll(".names button").forEach(function (b) { b.setAttribute("aria-pressed", b.dataset.id === id ? "true" : "false"); });
+  $("dn").innerHTML = esc(cur.namn) + ' ' + esc(cur.flagga || "");
+  var h = '<div class="chips" role="group" aria-label="Kortserie">' + order(cur).map(function (k) { return '<button type="button" class="chip" data-s="' + esc(k.serie) + '" aria-pressed="false">' + esc(seriesName(k.serie)) + '</button>'; }).join("") + '</div>';
   h += '<h4>Så har kortet växt</h4><ul class="bars" id="dbars"></ul>';
   if (cur.superkraft) h += '<h4>Superkraft (' + esc(seriesName(cur.superkraft.serie || "2024")) + ')</h4><div class="kraft"><b>' + esc(cur.superkraft.namn) + '</b>' + esc(cur.superkraft.text) + '</div>';
   h += '<h4>Utmärkelser</h4><ul class="awards">' + ((cur.utnamningar || []).length ? cur.utnamningar.map(function (u) { return '<li>' + esc(u) + '</li>'; }).join("") : '<li>Här samlas utmärkelserna. Alla är nominerade.</li>') + '</ul>';
-  h += '<div class="lovemeter">Kärlek 100 av 100<div class="bar" role="img" aria-label="Kärlek: 100 av 100"></div></div></div>';
-  $("dlg").innerHTML = h; $("dlg").showModal(); showSerie(curSerie);
+  h += '<div class="lovemeter">Kärlek 100 av 100<div class="bar" role="img" aria-label="Kärlek: 100 av 100"></div></div>';
+  $("detail").innerHTML = h; showSerie(curSerie);
+  if (!quiet) { try { history.replaceState(null, "", "#" + id); } catch (e) {} }
 }
 function showSerie(sid) {
   var k = pick(cur, sid); curSerie = k.serie;
   var img = $("dimg"); img.src = k.bild; img.alt = cur.namn + ", " + (POS[k.pos] || k.pos).toLowerCase() + ", kortserie " + seriesName(k.serie);
   $("dpos").textContent = (POS[k.pos] || k.pos) + " · " + seriesName(k.serie);
-  document.querySelectorAll("#dlg .chip").forEach(function (c) { c.setAttribute("aria-pressed", c.dataset.s === k.serie ? "true" : "false"); });
+  document.querySelectorAll("#detail .chip").forEach(function (c) { c.setAttribute("aria-pressed", c.dataset.s === k.serie ? "true" : "false"); });
   var ul = $("dbars"), same = ul.children.length === k.stats.length && Array.prototype.every.call(ul.children, function (li, i) { return li.dataset.l === k.stats[i][0]; });
   if (!same) ul.innerHTML = k.stats.map(function (s) { return '<li data-l="' + esc(s[0]) + '"><span></span><div class="bar"><i style="width:0"></i></div><b></b></li>'; }).join("");
   /* växtmarkeringar: bara uppåt, jämfört med närmast tidigare kortserie med årtal */
