@@ -22,8 +22,7 @@ a{color:inherit}
 
 /* huvud */
 .mast{display:flex;flex-direction:column;align-items:center;margin-bottom:18px}
-.mast .logo img{width:min(150px,40vw);height:auto}
-.mast.home .logo img{width:min(230px,60vw);margin:2px 0 4px}
+.mast .logo img{width:min(230px,60vw);height:auto;margin:2px 0 4px}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
 /* meny: enkla textlänkar. Aktuell sida är ljus och understruken. */
