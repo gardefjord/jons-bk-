@@ -19,21 +19,28 @@ a{color:inherit}
 .wrap{max-width:640px;margin:0 auto;padding:22px 16px 56px}
 
 /* huvud */
-.mast{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;margin-bottom:14px}
-.mast .logo img{width:min(230px,60vw);height:auto}
-.mast p{margin:0;font-size:13px;color:var(--soft)}
+.mast{display:flex;flex-direction:column;align-items:center;margin-bottom:18px}
+.mast .logo img{width:min(150px,40vw);height:auto}
+.hero{display:grid;justify-items:center;margin-bottom:22px}
+.hero .giant{display:contents}
+.hero .giant span{font:600 clamp(72px,23vw,152px)/.88 var(--display);letter-spacing:-.02em;color:var(--cream);text-align:center}
+.hero .giant span:first-child{order:1}
+.hero .logo{order:2}
+.hero .giant span:last-child{order:3}
+.hero .logo img{width:min(200px,50vw);margin:12px 0 10px}
+.micro{display:flex;justify-content:space-between;gap:12px;margin:18px 0 0;font:700 11px/1.4 var(--body);letter-spacing:.1em;text-transform:uppercase;color:var(--soft)}
+.micro span:last-child{white-space:nowrap;text-align:right}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
 /* meny: knappar. Aktuell sida är fylld och har en prick. */
 .nav{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;list-style:none;margin:0 0 6px;padding:0}
-.nav a{display:block;padding:9px 20px;border:1.5px solid rgba(255,245,236,.6);border-radius:99px;font-weight:800;font-size:15px;color:var(--text);text-decoration:none;transition:background .15s,border-color .15s,transform .15s}
+.nav a{display:block;padding:10px 20px;border:1.5px solid rgba(255,245,236,.6);border-radius:99px;font-weight:800;font-size:12.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--text);text-decoration:none;transition:background .15s,border-color .15s,transform .15s}
 .nav a:active{transform:scale(.96)}
 .nav a[aria-current="page"]{background:var(--cream);border-color:var(--cream);color:var(--bg);cursor:default}
 .nav a[aria-current="page"]::before{content:"";display:inline-block;width:8px;height:8px;margin-right:8px;border-radius:50%;background:var(--bg);vertical-align:1px}
-.pagetitle{margin:26px 0 0;text-align:center;font:400 36px/1.1 var(--display);color:var(--pink-lt)}
 
 /* sektioner */
-.sec{margin:36px 0 0}
+.sec{margin:56px 0 0}
 .sec > h2{margin:0 0 12px;font:800 12px/1 var(--body);letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
 .panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:6px 16px}
 .panel.plain{background:none;border:0;padding:0}
@@ -49,8 +56,8 @@ a{color:inherit}
 .more a:active{transform:scale(.98)}
 
 /* nästa match */
-.card{margin-top:8px;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:20px 18px}
-.nameplate{margin:0 0 14px;font:800 12px/1 var(--body);letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+.card{margin-top:20px;background:var(--cream);color:var(--ink);border-radius:20px;padding:24px 20px}
+.nameplate{margin:0 0 14px;font:800 12px/1 var(--body);letter-spacing:.12em;text-transform:uppercase;color:var(--bg)}
 .sticker{display:inline-block;margin-bottom:12px;background:var(--pink);color:var(--ink);font:800 13px/1 var(--body);padding:7px 12px;border-radius:99px}
 .versus .us{display:block;font:400 42px/1 var(--display);color:var(--pink-lt)}
 .versus .vs{display:block;margin:6px 0;font-size:14px;color:var(--soft)}
@@ -61,13 +68,27 @@ a{color:inherit}
 .stats dd{margin:0;text-align:right;font-weight:700;overflow-wrap:anywhere}
 .empty{margin:0;padding:4px 0 2px;font-size:17px;color:var(--soft)}
 
+/* nästa match: krämvit så att den sticker ut */
+.card .versus .us{color:var(--bg)}
+.card .versus .them{color:var(--ink)}
+.card .versus .vs,.card .stats dt,.card .empty{color:#5E4147}
+.card .stats dd{color:var(--ink)}
+.card .flame{border-top-color:#E6D9D0}
+
+/* kortremsa på startsidan */
+.strip{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x proximity;margin:0 -16px;padding:4px 16px 12px;-webkit-overflow-scrolling:touch}
+.strip a{flex:none;width:150px;scroll-snap-align:start;border-radius:8px}
+.strip img{width:100%;height:auto;aspect-ratio:250/390;object-fit:contain;border-radius:8px;background:var(--bg-deep);border:2px solid transparent;transition:transform .15s,border-color .15s}
+.strip a:active img{transform:scale(.98)}
+.strip-more{margin:6px 0 0}
+
 /* matcher */
 .rows{list-style:none;margin:0;padding:0}
 .rows li{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:2px 12px;padding:13px 0;border-bottom:1px solid var(--line)}
 .rows li:last-child{border-bottom:0}
 .rows .when{grid-column:1/-1;font-size:13px;color:var(--soft)}
 .rows .opp{font-weight:700;overflow-wrap:anywhere;min-width:0}
-.rows .score{font:800 20px/1 var(--body);font-variant-numeric:tabular-nums;white-space:nowrap}
+.rows .score{font:600 28px/1 var(--display);font-variant-numeric:tabular-nums;white-space:nowrap}
 /* resultatmarkörer skiljs på fyllning, inte på röd/grön: vinst = krämvit, lärdom = rosa, oavgjort = kontur */
 .res{width:30px;height:30px;display:grid;place-items:center;border-radius:50%;font:800 13px/1 var(--body);border:2px solid var(--cream);color:var(--cream)}
 .res.W{background:var(--cream);color:var(--leaf)}
@@ -138,10 +159,10 @@ dialog.spelare::backdrop{background:rgba(30,10,14,.7)}
 .btn:active{transform:scale(.97)}
 
 /* Fraunces: mjuk (SOFT 100) för rubriker och namn */
-.pagetitle,.versus .us,.versus .them,.ph h3,.foot .love{font-weight:600;font-variation-settings:"SOFT" 100,"opsz" 72}
-.pagetitle{font-size:34px;margin:26px 0 16px}
-.versus .us{font-size:40px}
-.versus .them{font-size:34px}
+.pagetitle,.hero .giant span,.rows .score,.versus .us,.versus .them,.ph h3,.foot .love{font-weight:600;font-variation-settings:"SOFT" 100,"opsz" 72}
+.pagetitle{font-family:var(--display);margin:34px 0 4px;text-align:center;font-size:clamp(60px,19vw,118px);line-height:.92;letter-spacing:-.02em;color:var(--cream)}
+.versus .us{font-size:44px}
+.versus .them{font-size:38px}
 
 /* hover (bara med mus) */
 @media (hover:hover){
@@ -151,6 +172,7 @@ dialog.spelare::backdrop{background:rgba(30,10,14,.7)}
   .more a:hover span{transform:translateX(4px)}
   .tiles a:hover{transform:translateY(-2px);box-shadow:0 8px 16px rgba(0,0,0,.28)}
   .tiles a:hover i{transform:translateX(5px)}
+  .strip a:hover img{transform:translateY(-4px);border-color:var(--pink)}
   .tile:hover img{transform:translateY(-4px);border-color:var(--pink);box-shadow:0 10px 20px rgba(0,0,0,.35)}
   .tile:hover b{text-decoration:underline}
   .tile:hover .open{background:var(--cream)}

@@ -18,16 +18,20 @@ function resOf(m) { var a = +m.gf, b = +m.ga; return a > b ? "W" : a < b ? "L" :
 var RES = { W: ["V", "Vinst"], D: ["O", "Oavgjort"], L: ["L", "Lärdom"] };
 
 /* ---------- grafik ---------- */
-var TITLES = { "start": "Start", "matcher": "Matcher och tabell", "laget": "Laget" };
+var TITLES = { "start": "Start", "matcher": "Matcher", "laget": "Laget" };
 var NAV = [["start", "Start", "index.html"], ["matcher", "Matcher", "matcher.html"], ["laget", "Laget", "laget.html"]];
 
 /* ---------- gemensam ram ---------- */
 function frame(inner, d) {
   d = d || {};
   var h = '<div class="wrap">';
-  h += '<header class="mast"><a href="index.html" class="logo"><img src="assets/logo/jons-bk-rosa.png" width="230" height="229" alt="Jons BK, till startsidan"></a><p>Korpen Stockholm' + (d.league ? ' · ' + esc(d.league) : '') + '</p></header>';
+  var logo = '<a href="index.html" class="logo"><img src="assets/logo/jons-bk-rosa.png" width="230" height="229" alt="Jons BK, till startsidan"></a>';
+  h += PAGE === "start"
+    ? '<header class="mast hero"><h1 class="giant"><span>Jons är</span><span>kärlek</span></h1>' + logo + '</header>'
+    : '<header class="mast">' + logo + '</header>';
   h += '<nav aria-label="Huvudmeny"><ul class="nav">' + NAV.map(function (n) { return '<li><a href="' + n[2] + '"' + (n[0] === PAGE ? ' aria-current="page"' : '') + '>' + n[1] + '</a></li>'; }).join("") + '</ul></nav>';
-  h += '<main><h1 class="pagetitle">' + esc(TITLES[PAGE] || "") + '</h1>' + inner + '</main>';
+  h += '<div class="micro"><span>Korpen Stockholm' + (d.league ? ' · ' + esc(d.league) : '') + '</span><span>' + esc(d.venue || "") + '</span></div>';
+  h += '<main>' + (PAGE === "start" ? "" : '<h1 class="pagetitle">' + esc(TITLES[PAGE] || "") + '</h1>') + inner + '</main>';
   h += '<footer class="foot"><img src="assets/logo/jons-bk-rosa.png" width="44" height="44" alt=""><p class="love">Jons är kärlek</p><small>Matcher och tabell från Korpen Stockholm</small></footer></div>';
   root.innerHTML = h;
 }
@@ -92,13 +96,12 @@ function tableHtml(s) {
 }
 var DEMO = '<p class="note">Resultaten och tabellen här är exempel för att visa designen. De riktiga är på väg.</p>';
 
-function pageStart(s) {
+function pageStart(s, pl) {
   var L = lists(s), h = (s.demo ? DEMO : "") + nextCard(s, L.next) + upcoming(s, L.later);
   if (L.done.length) h += sec("Senaste resultat", resRows(L.done.slice(0, 5)) + LEGEND + '<p class="more"><a href="matcher.html#spelade">Alla resultat och tabellen <span aria-hidden="true">&rarr;</span></a></p>');
-  h += '<section class="sec"><h2>Utforska</h2><div class="panel plain"><ul class="tiles">' +
-    '<li><a href="matcher.html"><div><b>Matcher &amp; tabell</b><span>Resultat, kommande matcher och ställning</span></div><i>&rarr;</i></a></li>' +
-    '<li><a href="laget.html"><div><b>Laget</b><span>Ett spelarkort med superkraft för varje hjärta</span></div><i>&rarr;</i></a></li>' +
-    '</ul></div></section>';
+  if (pl && pl.spelare) {
+    h += '<section class="sec"><h2>Laget</h2><div class="strip">' + pl.spelare.filter(function (p) { return p.grupp === "trupp"; }).map(function (p) { var k = pick(p, "2026"); return '<a href="laget.html"><img src="' + esc(k.bild) + '" width="250" height="390" loading="lazy" alt="' + esc(p.namn) + ', spelarkort"></a>'; }).join("") + '</div><p class="more strip-more"><a href="laget.html">Möt laget <span aria-hidden="true">&rarr;</span></a></p></section>';
+  }
   frame(h, s);
 }
 function pageMatcher(s) {
@@ -160,7 +163,7 @@ function showSerie(sid) {
 
 /* ---------- start ---------- */
 var JOBS = {
-  "start": function () { return getJson("data.json").then(pageStart); },
+  "start": function () { return Promise.all([getJson("data.json"), getJson("spelare.json").catch(function () { return null; })]).then(function (r) { SERIES = (r[1] && r[1].serier) || []; pageStart(r[0], r[1]); }); },
   "matcher": function () { return getJson("data.json").then(pageMatcher); },
   "laget": function () { return Promise.all([getJson("data.json"), getJson("spelare.json")]).then(function (r) { pageLaget(r[0], r[1]); }); }
 };
