@@ -5,7 +5,6 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
-    paths: [jons-bk.html, data.json, scripts/**, .github/workflows/deploy.yml]
 permissions:
   contents: write
   pages: write
@@ -39,8 +38,8 @@ jobs:
       - name: Build site
         run: |
           mkdir _site
-          cp jons-bk.html _site/index.html
-          cp data.json _site/data.json
+          cp *.html style.css site.js data.json spelare.json galleri.json _site/
+          cp -r assets _site/assets
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with: { path: _site }

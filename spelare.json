@@ -1,0 +1,1089 @@
+{
+ "_hjalp": "Redigera här på GitHub. 'utnamningar' är en lista med text, t.ex. [\"Årets hjärta 2026\"]. Ett kort per kortserie i 'kort'. Siffrorna är avlästa från korten.",
+ "serier": [
+  {
+   "id": "2026",
+   "namn": "2026"
+  },
+  {
+   "id": "stal",
+   "namn": "Stålkortet"
+  },
+  {
+   "id": "guld",
+   "namn": "Guldkortet"
+  }
+ ],
+ "spelare": [
+  {
+   "id": "anton",
+   "namn": "Anton",
+   "grupp": "trupp",
+   "flagga": "",
+   "kort": [
+    {
+     "serie": "2026",
+     "pos": "ST",
+     "bild": "assets/kort/2026/anton.jpg",
+     "stats": [
+      [
+       "Fart",
+       90
+      ],
+      [
+       "Dribbling",
+       89
+      ],
+      [
+       "Styrka",
+       79
+      ],
+      [
+       "Skott",
+       83
+      ],
+      [
+       "Passning",
+       79
+      ],
+      [
+       "Uthållighet",
+       72
+      ]
+     ]
+    },
+    {
+     "serie": "stal",
+     "pos": "RW",
+     "bild": "assets/kort/stal/anton.jpg",
+     "stats": [
+      [
+       "Fart",
+       92
+      ],
+      [
+       "Dribbling",
+       90
+      ],
+      [
+       "Styrka",
+       72
+      ],
+      [
+       "Skott",
+       95
+      ],
+      [
+       "Passning",
+       80
+      ],
+      [
+       "Uthållighet",
+       70
+      ]
+     ]
+    }
+   ],
+   "utnamningar": [],
+   "superkraft": {
+    "namn": "Juninhos anda",
+    "text": "Gör mål på varje frispark.",
+    "serie": "stal"
+   }
+  },
+  {
+   "id": "fabian",
+   "namn": "Fabian",
+   "grupp": "trupp",
+   "flagga": "🇸🇪",
+   "kort": [
+    {
+     "serie": "2026",
+     "pos": "CM",
+     "bild": "assets/kort/2026/fabian.jpg",
+     "stats": [
+      [
+       "Fart",
+       79
+      ],
+      [
+       "Dribbling",
+       82
+      ],
+      [
+       "Styrka",
+       85
+      ],
+      [
+       "Skott",
+       81
+      ],
+      [
+       "Passning",
+       89
+      ],
+      [
+       "Uthållighet",
+       87
+      ]
+     ]
+    },
+    {
+     "serie": "stal",
+     "pos": "CM",
+     "bild": "assets/kort/stal/fabian.jpg",
+     "stats": [
+      [
+       "Fart",
+       75
+      ],
+      [
+       "Dribbling",
+       81
+      ],
+      [
+       "Styrka",
+       80
+      ],
+      [
+       "Skott",
+       78
+      ],
+      [
+       "Passning",
+       90
+      ],
+      [
+       "Uthållighet",
+       81
+      ]
+     ]
+    }
+   ],
+   "utnamningar": [],
+   "superkraft": {
+    "namn": "Hög spelintelligens",
+    "text": "Hittar en lösning på alla knepiga lägen.",
+    "serie": "stal"
+   }
+  },
+  {
+   "id": "john",
+   "namn": "John",
+   "grupp": "trupp",
+   "flagga": "🇸🇪",
+   "kort": [
+    {
+     "serie": "2026",
+     "pos": "CM",
+     "bild": "assets/kort/2026/john.jpg",
+     "stats": [
+      [
+       "Fart",
+       78
+      ],
+      [
+       "Dribbling",
+       80
+      ],
+      [
+       "Styrka",
+       80
+      ],
+      [
+       "Skott",
+       83
+      ],
+      [
+       "Passning",
+       83
+      ],
+      [
+       "Uthållighet",
+       85
+      ]
+     ]
+    },
+    {
+     "serie": "stal",
+     "pos": "CM",
+     "bild": "assets/kort/stal/john.jpg",
+     "stats": [
+      [
+       "Fart",
+       75
+      ],
+      [
+       "Dribbling",
+       89
+      ],
+      [
+       "Styrka",
+       85
+      ],
+      [
+       "Skott",
+       80
+      ],
+      [
+       "Passning",
+       86
+      ],
+      [
+       "Uthållighet",
+       91
+      ]
+     ]
+    }
+   ],
+   "utnamningar": [],
+   "superkraft": {
+    "namn": "Bigfoot",
+    "text": "Blockerar vad som helst med bara en fot.",
+    "serie": "stal"
+   }
+  },
+  {
+   "id": "theo",
+   "namn": "Theo",
+   "grupp": "trupp",
+   "flagga": "🇸🇪",
+   "kort": [
+    {
+     "serie": "2026",
+     "pos": "RB",
+     "bild": "assets/kort/2026/theo.jpg",
+     "stats": [
+      [
+       "Fart",
+       85
+      ],
+      [
+       "Dribbling",
+       80
+      ],
+      [
+       "Styrka",
+       89
+      ],
+      [
+       "Skott",
+       75
+      ],
+      [
+       "Passning",
+       83
+      ],
+      [
+       "Uthållighet",
+       95
+      ]
+     ]
+    },
+    {
+     "serie": "stal",
+     "pos": "RB",
+     "bild": "assets/kort/stal/theo.jpg",
+     "stats": [
+      [
+       "Fart",
+       85
+      ],
+      [
+       "Dribbling",
+       72
+      ],
+      [
+       "Styrka",
+       88
+      ],
+      [
+       "Skott",
+       79
+      ],
+      [
+       "Passning",
+       78
+      ],
+      [
+       "Uthållighet",
+       99
+      ]
+     ]
+    }
+   ],
+   "utnamningar": [],
+   "superkraft": {
+    "namn": "Terrier-mentalitet",
+    "text": "Springer ikapp precis vilken motståndare som helst.",
+    "serie": "stal"
+   }
+  },
+  {
+   "id": "erkan",
+   "namn": "Erkan",
+   "grupp": "trupp",
+   "flagga": "🇳🇴",
+   "kort": [
+    {
+     "serie": "2026",
+     "pos": "GK",
+     "bild": "assets/kort/2026/erkan.jpg",
+     "stats": [
+      [
+       "Fart",
+       79
+      ],
+      [
+       "Dykning",
+       87
+      ],
+      [
+       "Spark",
+       83
+      ],
+      [
+       "Händer",
+       86
+      ],
+      [
+       "Reflexer",
+       93
+      ],
+      [
+       "Uthållighet",
+       78
+      ]
+     ]
+    },
+    {
+     "serie": "stal",
+     "pos": "GK",
+     "bild": "assets/kort/stal/erkan.jpg",
+     "stats": [
+      [
+       "Reflexer",
+       99
+      ],
+      [
+       "Dykning",
+       79
+      ],
+      [
+       "Händer",
+       88
+      ],
+      [
+       "Fart",
+       70
+      ],
+      [
+       "Spark",
+       82
+      ],
+      [
+       "Positionering",
+       85
+      ]
+     ]
+    }
+   ],
+   "utnamningar": [],
+   "superkraft": {
+    "namn": "Goose-slaughter",
+    "text": "Blir så zen att alla skott räddas.",
+    "serie": "stal"
+   }
+  },
+  {
+   "id": "jon",
+   "namn": "Jon",
+   "grupp": "trupp",
+   "flagga": "🇸🇪",
+   "kort": [
+    {
+     "serie": "2026",
+     "pos": "CM",
+     "bild": "assets/kort/2026/jon.jpg",
+     "stats": [
+      [
+       "Fart",
+       95
+      ],
+      [
+       "Dribbling",
+       93
+      ],
+      [
+       "Styrka",
+       90
+      ],
+      [
+       "Skott",
+       99
+      ],
+      [
+       "Passning",
+       95
+      ],
+      [
+       "Uthållighet",
+       89
+      ]
+     ]
+    },
+    {
+     "serie": "stal",
+     "pos": "CM",
+     "bild": "assets/kort/stal/jon.jpg",
+     "stats": [
+      [
+       "Fart",
+       90
+      ],
+      [
+       "Dribbling",
+       90
+      ],
+      [
+       "Styrka",
+       90
+      ],
+      [
+       "Skott",
+       99
+      ],
+      [
+       "Passning",
+       88
+      ],
+      [
+       "Uthållighet",
+       89
+      ]
+     ]
+    }
+   ],
+   "utnamningar": [],
+   "superkraft": {
+    "namn": "Kraftskott",
+    "text": "Kan skjuta bollen med enorm kraft.",
+    "serie": "stal"
+   }
+  },
+  {
+   "id": "jerka",
+   "namn": "Jerka",
+   "grupp": "trupp",
+   "flagga": "🇸🇪",
+   "kort": [
+    {
+     "serie": "2026",
+     "pos": "CB",
+     "bild": "assets/kort/2026/jerka.jpg",
+     "stats": [
+      [
+       "Fart",
+       85
+      ],
+      [
+       "Dribbling",
+       82
+      ],
+      [
+       "Styrka",
+       95
+      ],
+      [
+       "Skott",
+       89
+      ],
+      [
+       "Passning",
+       81
+      ],
+      [
+       "Uthållighet",
+       80
+      ]
+     ]
+    },
+    {
+     "serie": "stal",
+     "pos": "CB",
+     "bild": "assets/kort/stal/jerka.jpg",
+     "stats": [
+      [
+       "Fart",
+       82
+      ],
+      [
+       "Dribbling",
+       78
+      ],
+      [
+       "Styrka",
+       99
+      ],
+      [
+       "Skott",
+       82
+      ],
+      [
+       "Passning",
+       85
+      ],
+      [
+       "Uthållighet",
+       80
+      ]
+     ]
+    }
+   ],
+   "utnamningar": [],
+   "superkraft": {
+    "namn": "Extremt långa ben",
+    "text": "Kan glidtackla bollen från alla vinklar.",
+    "serie": "stal"
+   }
+  },
+  {
+   "id": "vincent",
+   "namn": "Vincent",
+   "grupp": "trupp",
+   "flagga": "🇩🇪",
+   "kort": [
+    {
+     "serie": "2026",
+     "pos": "ST",
+     "bild": "assets/kort/2026/vincent.jpg",
+     "stats": [
+      [
+       "Fart",
+       79
+      ],
+      [
+       "Dribbling",
+       85
+      ],
+      [
+       "Styrka",
+       80
+      ],
+      [
+       "Skott",
+       90
+      ],
+      [
+       "Passning",
+       82
+      ],
+      [
+       "Uthållighet",
+       83
+      ]
+     ]
+    },
+    {
+     "serie": "stal",
+     "pos": "LW",
+     "bild": "assets/kort/stal/vincent.jpg",
+     "stats": [
+      [
+       "Fart",
+       75
+      ],
+      [
+       "Dribbling",
+       90
+      ],
+      [
+       "Styrka",
+       79
+      ],
+      [
+       "Skott",
+       87
+      ],
+      [
+       "Passning",
+       82
+      ],
+      [
+       "Uthållighet",
+       75
+      ]
+     ]
+    }
+   ],
+   "utnamningar": [],
+   "superkraft": {
+    "namn": "Nerver av stål",
+    "text": "Gör alltid elasticon, även under press.",
+    "serie": "stal"
+   }
+  },
+  {
+   "id": "matteo",
+   "namn": "Matteo",
+   "grupp": "trupp",
+   "flagga": "🇮🇹",
+   "kort": [
+    {
+     "serie": "2026",
+     "pos": "LB",
+     "bild": "assets/kort/2026/matteo.jpg",
+     "stats": [
+      [
+       "Fart",
+       84
+      ],
+      [
+       "Dribbling",
+       81
+      ],
+      [
+       "Styrka",
+       90
+      ],
+      [
+       "Skott",
+       79
+      ],
+      [
+       "Passning",
+       88
+      ],
+      [
+       "Uthållighet",
+       89
+      ]
+     ]
+    },
+    {
+     "serie": "stal",
+     "pos": "LB",
+     "bild": "assets/kort/stal/matteo.jpg",
+     "stats": [
+      [
+       "Fart",
+       79
+      ],
+      [
+       "Dribbling",
+       86
+      ],
+      [
+       "Styrka",
+       80
+      ],
+      [
+       "Skott",
+       83
+      ],
+      [
+       "Passning",
+       98
+      ],
+      [
+       "Uthållighet",
+       77
+      ]
+     ]
+    },
+    {
+     "serie": "guld",
+     "pos": "CM",
+     "bild": "assets/kort/guld/matteo.jpg",
+     "stats": [
+      [
+       "Fart",
+       82
+      ],
+      [
+       "Dribbling",
+       88
+      ],
+      [
+       "Skott",
+       89
+      ],
+      [
+       "Passning",
+       98
+      ],
+      [
+       "Försvar",
+       70
+      ],
+      [
+       "Fysik",
+       80
+      ]
+     ]
+    }
+   ],
+   "utnamningar": [],
+   "superkraft": {
+    "namn": "Italiensk högerfot",
+    "text": "Träffar varje långpass.",
+    "serie": "stal"
+   }
+  },
+  {
+   "id": "adam",
+   "namn": "Adam",
+   "grupp": "trupp",
+   "flagga": "🇸🇪",
+   "kort": [
+    {
+     "serie": "2026",
+     "pos": "LW",
+     "bild": "assets/kort/2026/adam.jpg",
+     "stats": [
+      [
+       "Fart",
+       80
+      ],
+      [
+       "Dribbling",
+       85
+      ],
+      [
+       "Styrka",
+       78
+      ],
+      [
+       "Skott",
+       90
+      ],
+      [
+       "Passning",
+       87
+      ],
+      [
+       "Uthållighet",
+       77
+      ]
+     ]
+    }
+   ],
+   "utnamningar": []
+  },
+  {
+   "id": "jorn",
+   "namn": "Jörn",
+   "grupp": "vanner",
+   "flagga": "🇸🇪",
+   "kort": [
+    {
+     "serie": "stal",
+     "pos": "ST",
+     "bild": "assets/kort/stal/jorn.jpg",
+     "stats": [
+      [
+       "Fart",
+       86
+      ],
+      [
+       "Dribbling",
+       80
+      ],
+      [
+       "Styrka",
+       78
+      ],
+      [
+       "Skott",
+       79
+      ],
+      [
+       "Passning",
+       74
+      ],
+      [
+       "Uthållighet",
+       99
+      ]
+     ]
+    }
+   ],
+   "utnamningar": [],
+   "superkraft": {
+    "namn": "Beast mode",
+    "text": "Tröttnar aldrig på att jaga bollen.",
+    "serie": "stal"
+   }
+  },
+  {
+   "id": "simon",
+   "namn": "Simon",
+   "grupp": "vanner",
+   "flagga": "🇩🇰",
+   "kort": [
+    {
+     "serie": "stal",
+     "pos": "ST",
+     "bild": "assets/kort/stal/simon.jpg",
+     "stats": [
+      [
+       "Fart",
+       74
+      ],
+      [
+       "Dribbling",
+       87
+      ],
+      [
+       "Styrka",
+       90
+      ],
+      [
+       "Skott",
+       92
+      ],
+      [
+       "Passning",
+       73
+      ],
+      [
+       "Uthållighet",
+       79
+      ]
+     ]
+    }
+   ],
+   "utnamningar": [],
+   "superkraft": {
+    "namn": "Inzaghi-blick",
+    "text": "Kan göra mål på vilken chans som helst.",
+    "serie": "stal"
+   }
+  },
+  {
+   "id": "lukas",
+   "namn": "Lukas",
+   "grupp": "vanner",
+   "flagga": "🇳🇴",
+   "kort": [
+    {
+     "serie": "stal",
+     "pos": "LB",
+     "bild": "assets/kort/stal/lukas.jpg",
+     "stats": [
+      [
+       "Fart",
+       83
+      ],
+      [
+       "Dribbling",
+       84
+      ],
+      [
+       "Styrka",
+       76
+      ],
+      [
+       "Skott",
+       90
+      ],
+      [
+       "Passning",
+       87
+      ],
+      [
+       "Uthållighet",
+       74
+      ]
+     ]
+    }
+   ],
+   "utnamningar": [],
+   "superkraft": {
+    "namn": "Pirlo-skott",
+    "text": "Kurvar in bollen i nätet från planens mitt.",
+    "serie": "stal"
+   }
+  },
+  {
+   "id": "gustav",
+   "namn": "Gustav",
+   "grupp": "vanner",
+   "flagga": "🇸🇪",
+   "kort": [
+    {
+     "serie": "stal",
+     "pos": "RB",
+     "bild": "assets/kort/stal/gustav.jpg",
+     "stats": [
+      [
+       "Fart",
+       82
+      ],
+      [
+       "Dribbling",
+       75
+      ],
+      [
+       "Styrka",
+       92
+      ],
+      [
+       "Skott",
+       84
+      ],
+      [
+       "Passning",
+       89
+      ],
+      [
+       "Uthållighet",
+       88
+      ]
+     ]
+    }
+   ],
+   "utnamningar": [],
+   "superkraft": {
+    "namn": "Ger aldrig upp",
+    "text": "Vinner tillbaka bollen i vilket läge som helst.",
+    "serie": "stal"
+   }
+  },
+  {
+   "id": "erik",
+   "namn": "Erik",
+   "grupp": "vanner",
+   "flagga": "🇸🇪",
+   "kort": [
+    {
+     "serie": "stal",
+     "pos": "LW",
+     "bild": "assets/kort/stal/erik.jpg",
+     "stats": [
+      [
+       "Fart",
+       72
+      ],
+      [
+       "Dribbling",
+       79
+      ],
+      [
+       "Styrka",
+       84
+      ],
+      [
+       "Skott",
+       85
+      ],
+      [
+       "Passning",
+       90
+      ],
+      [
+       "Uthållighet",
+       72
+      ]
+     ]
+    }
+   ],
+   "utnamningar": [],
+   "superkraft": {
+    "namn": "Lagspelare",
+    "text": "Hittar alltid passningen till en lagkamrat som kan göra mål.",
+    "serie": "stal"
+   }
+  },
+  {
+   "id": "adam-jarnpanna",
+   "namn": "Adam (Järnpanna)",
+   "grupp": "vanner",
+   "flagga": "🇸🇪",
+   "kort": [
+    {
+     "serie": "stal",
+     "pos": "RB",
+     "bild": "assets/kort/stal/adam-jarnpanna.jpg",
+     "stats": [
+      [
+       "Fart",
+       85
+      ],
+      [
+       "Dribbling",
+       75
+      ],
+      [
+       "Styrka",
+       95
+      ],
+      [
+       "Skott",
+       74
+      ],
+      [
+       "Passning",
+       86
+      ],
+      [
+       "Uthållighet",
+       86
+      ]
+     ]
+    }
+   ],
+   "utnamningar": [],
+   "superkraft": {
+    "namn": "Järnpanna",
+    "text": "Nickar bollen extremt hårt.",
+    "serie": "stal"
+   }
+  },
+  {
+   "id": "adam-okocha",
+   "namn": "Adam (Okocha)",
+   "grupp": "vanner",
+   "flagga": "🇸🇪",
+   "kort": [
+    {
+     "serie": "stal",
+     "pos": "RB",
+     "bild": "assets/kort/stal/adam-okocha.jpg",
+     "stats": [
+      [
+       "Fart",
+       92
+      ],
+      [
+       "Dribbling",
+       92
+      ],
+      [
+       "Styrka",
+       88
+      ],
+      [
+       "Skott",
+       90
+      ],
+      [
+       "Passning",
+       86
+      ],
+      [
+       "Uthållighet",
+       78
+      ]
+     ]
+    }
+   ],
+   "utnamningar": [],
+   "superkraft": {
+    "namn": "Okocha-fötter",
+    "text": "Klarar sig med en dribbling i vilket läge som helst.",
+    "serie": "stal"
+   }
+  }
+ ]
+}

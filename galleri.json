@@ -1,0 +1,8 @@
+{
+  "_hjalp": "Lägg till bilder i assets/foton och en rad här: src, alt (beskriv bilden) och text (bildtext).",
+  "foton": [
+    { "src": "assets/foton/hjartans-dag.jpg", "alt": "Röd t-shirt med ett hjärta och texten JONS BK", "text": "Alla hjärtans dag. Hjärtat på bröstet säger det mesta: Jons BK." },
+    { "src": "assets/foton/guldmedalj.jpg", "alt": "Leende person med röd mössa och en guldmedalj runt halsen", "text": "Guld runt halsen. Alla förtjänar en medalj ibland." },
+    { "src": "assets/kort/guld/matteo.jpg", "alt": "Matteos guldkort i FIFA-stil", "text": "Matteos guldkort. 98 i passning och 100 i kärlek." }
+  ]
+}
