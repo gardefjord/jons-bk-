@@ -102,14 +102,14 @@ table.lg{width:100%;border-collapse:collapse;font-size:14px;font-variant-numeric
 /* spelarraden: ansikten i bokstavsordning, sticky, med kantskuggor som visar att fler finns */
 .bubwrap{position:sticky;top:0;z-index:30;margin:6px -16px 0;padding:10px 16px 8px;background:var(--bg);border-bottom:1px solid var(--line)}
 .bubfade{position:relative}
-.bubfade::before,.bubfade::after{content:"";position:absolute;top:0;bottom:0;width:56px;z-index:2;pointer-events:none;opacity:0;transition:opacity .25s}
-.bubfade::before{left:-2px;background:linear-gradient(to right,var(--bg) 12%,rgba(169,51,64,0))}
-.bubfade::after{right:-2px;background:linear-gradient(to left,var(--bg) 12%,rgba(169,51,64,0))}
+.bubfade::before,.bubfade::after{content:"";position:absolute;top:0;bottom:0;width:64px;z-index:2;pointer-events:none;opacity:0;transition:opacity .25s}
+.bubfade::before{left:-2px;background:linear-gradient(to right,rgba(169,51,64,.94),rgba(169,51,64,0))}
+.bubfade::after{right:-2px;background:linear-gradient(to left,rgba(169,51,64,.94),rgba(169,51,64,0))}
 .bubfade.more-l::before,.bubfade.more-r::after{opacity:1}
 .bubbles{display:flex;gap:12px;overflow-x:auto;padding:4px 20px 6px;scroll-snap-type:x proximity;scrollbar-width:none}
 .bubbles::-webkit-scrollbar{display:none}
-.bub{flex:none;display:grid;justify-items:center;gap:5px;width:62px;background:none;border:0;padding:0;color:var(--text);cursor:pointer;scroll-snap-align:center}
-.bub .av{width:54px;height:54px;border-radius:50%;object-fit:cover;background:var(--bg-deep);border:2px solid transparent;transition:transform .15s,border-color .15s,box-shadow .15s}
+.bub{flex:none;display:grid;justify-items:center;gap:5px;width:var(--bw,62px);background:none;border:0;padding:0;color:var(--text);cursor:pointer;scroll-snap-align:center}
+.bub .av{width:calc(var(--bw,62px) - 8px);height:calc(var(--bw,62px) - 8px);border-radius:50%;object-fit:cover;background:var(--bg-deep);border:2px solid transparent;transition:transform .15s,border-color .15s,box-shadow .15s}
 .bub span{font:800 10.5px/1.1 var(--body);text-align:center;color:var(--soft);transition:color .15s}
 .bub[aria-current="true"] .av{border-color:var(--mint);box-shadow:0 0 0 2px var(--mint)}
 .bub[aria-current="true"] span{color:var(--mint)}
@@ -123,10 +123,10 @@ table.lg{width:100%;border-collapse:collapse;font-size:14px;font-variant-numeric
   transition:opacity .17s ease,transform .32s cubic-bezier(.2,.8,.2,1)}
 .stage img.out{opacity:0;transform:translateX(var(--dx,0)) scale(.97)}
 .stage img.jump{transition:none}
-.arrow{position:absolute;top:50%;width:44px;height:44px;margin-top:-22px;display:grid;place-items:center;cursor:pointer;border:1.5px solid rgba(255,245,236,.6);border-radius:2px;background:transparent;color:var(--text);font-size:18px;font-weight:800;transition:background .15s,transform .15s}
-.arrow[data-step="-1"]{left:0}.arrow[data-step="1"]{right:0}
-.arrow:active{transform:scale(.94)}
-.count{margin:16px 0 0;text-align:center;font:700 11px/1 var(--body);letter-spacing:.14em;color:var(--soft);font-variant-numeric:tabular-nums}
+.pager{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:18px}
+.pg{width:56px;height:44px;display:grid;place-items:center;cursor:pointer;border:1.5px solid rgba(255,245,236,.6);border-radius:2px;background:transparent;color:var(--text);font:800 20px/1 var(--body);transition:background .15s,transform .15s}
+.pg:active{transform:scale(.94)}
+.count{margin:0;min-width:74px;text-align:center;font:700 12px/1 var(--body);letter-spacing:.14em;color:var(--soft);font-variant-numeric:tabular-nums}
 .who{margin-top:18px;text-align:center}
 .who h2{margin:0;font:600 clamp(40px,12vw,64px)/1 var(--display);font-variation-settings:"SOFT" 100,"opsz" 72;color:var(--cream)}
 .who p{margin:8px 0 0;font:700 11px/1.4 var(--body);letter-spacing:.1em;text-transform:uppercase;color:var(--soft)}
@@ -185,7 +185,7 @@ table.lg{width:100%;border-collapse:collapse;font-size:14px;font-variant-numeric
   .more a:hover{background:var(--pink-lt)}
   .more a:hover span{transform:translateX(4px)}
   .strip a:hover img{transform:translateY(-4px);border-color:var(--pink)}
-  .arrow:hover{background:rgba(255,255,255,.18)}
+  .pg:hover{background:rgba(255,255,255,.18)}
   .bub:hover .av{transform:scale(1.08)}
   .bub:not([aria-current="true"]):hover span{color:var(--text)}
   .bubnav:hover{background:#7d2430}

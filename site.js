@@ -118,8 +118,8 @@ function pageLaget(d, data) {
   var h = '<div class="bubwrap"><div class="bubfade" id="bubfade"><div class="bubbles" id="bubbles" role="group" aria-label="Välj spelare">' +
     PL.map(function (p) { return '<button type="button" class="bub" data-id="' + esc(p.id) + '" aria-current="false"><img class="av" src="assets/avatars/' + esc(p.id) + '.jpg" alt="" width="64" height="64" loading="lazy"><span>' + esc(p.namn) + '</span></button>'; }).join("") +
     '</div><button type="button" class="bubnav l" data-scroll="-1" aria-label="Fler spelare åt vänster">&lsaquo;</button><button type="button" class="bubnav r" data-scroll="1" aria-label="Fler spelare åt höger">&rsaquo;</button></div></div>';
-  h += '<div class="stage" id="stage"><button type="button" class="arrow" data-step="-1" aria-label="Föregående spelare">&larr;</button><img id="dimg" alt=""><button type="button" class="arrow" data-step="1" aria-label="Nästa spelare">&rarr;</button></div>';
-  h += '<p class="count" id="count" aria-live="polite"></p>';
+  h += '<div class="stage" id="stage"><img id="dimg" alt=""></div>';
+  h += '<div class="pager"><button type="button" class="pg" data-step="-1" aria-label="Föregående spelare">&larr;</button><p class="count" id="count" aria-live="polite"></p><button type="button" class="pg" data-step="1" aria-label="Nästa spelare">&rarr;</button></div>';
   h += '<div class="who" id="who"><h2 id="dn"></h2><p id="dpos"></p></div>';
   h += '<div class="detail"><div class="chips" id="chips" role="group" aria-label="Kortserie"></div>' +
     '<h4 id="sh"></h4><p class="legend" id="legend"></p><ul class="bars" id="dbars"></ul>' +
@@ -140,9 +140,16 @@ function pageLaget(d, data) {
   st.addEventListener("touchstart", function (e) { sx = e.touches[0].clientX; }, { passive: true });
   st.addEventListener("touchend", function (e) { if (sx === null) return; var dx = e.changedTouches[0].clientX - sx; sx = null; if (Math.abs(dx) > 40) step(dx < 0 ? 1 : -1); }, { passive: true });
   window.addEventListener("hashchange", function () { var id = location.hash.slice(1); if (id && (!cur || cur.id !== id)) select(id, true); });
-  var bubs = $("bubbles"); bubs.addEventListener("scroll", bubFade, { passive: true }); window.addEventListener("resize", bubFade);
+  var bubs = $("bubbles"); bubs.addEventListener("scroll", bubFade, { passive: true }); window.addEventListener("resize", sizeBubbles); requestAnimationFrame(sizeBubbles);
   var start = location.hash.slice(1);
   select(PL.some(function (p) { return p.id === start; }) ? start : PL[0].id, true);
+}
+/* Bubblornas bredd räknas så att en halv bubbla alltid sticker fram i kanten: då syns det att raden går att svepa */
+function sizeBubbles() {
+  var r = $("bubbles"); if (!r) return;
+  var R = r.clientWidth, pad = matchMedia("(hover:hover)").matches ? 38 : 20, gap = 12, k = Math.max(3, Math.floor((R - pad) / 72));
+  r.style.setProperty("--bw", Math.min(76, Math.max(52, (R - pad - gap * k) / (k + 0.5))) + "px");
+  bubFade();
 }
 /* Kantskuggor som visar att raden med spelare fortsätter åt det håll man kan scrolla */
 function bubFade() {
