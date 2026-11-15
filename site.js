@@ -118,47 +118,103 @@ function pageLaget(d, data) {
   function names(list) { return list.map(function (p) { return '<li><button type="button" data-id="' + esc(p.id) + '" aria-pressed="false">' + esc(p.namn) + '</button></li>'; }).join(""); }
   var trupp = PL.filter(function (p) { return p.grupp === "trupp"; }), vanner = PL.filter(function (p) { return p.grupp !== "trupp"; });
   var h = '<nav class="index" aria-label="Välj spelare"><p class="idx">Truppen 2026</p><ul class="names">' + names(trupp) + '</ul>' + (vanner.length ? '<p class="idx">Fler som delat bollen med oss</p><ul class="names">' + names(vanner) + '</ul>' : '') + '</nav>';
-  h += '<div class="stage"><img id="dimg" alt=""></div>';
-  h += '<div class="stagebar"><button type="button" class="btn sm" data-step="-1">&larr; Föregående</button><button type="button" class="btn sm" data-step="1">Nästa &rarr;</button></div>';
-  h += '<div class="who"><h2 id="dn"></h2><p id="dpos"></p></div><div class="detail" id="detail"></div>';
+  h += '<div class="stage" id="stage"><button type="button" class="arrow" data-step="-1" aria-label="Föregående spelare">&larr;</button><img id="dimg" alt=""><button type="button" class="arrow" data-step="1" aria-label="Nästa spelare">&rarr;</button></div>';
+  h += '<p class="count" id="count" aria-live="polite"></p>';
+  h += '<div class="who" id="who"><h2 id="dn"></h2><p id="dpos"></p></div>';
+  h += '<div class="detail"><div class="chips" id="chips" role="group" aria-label="Kortserie"></div>' +
+    '<h4 id="sh"></h4><p class="legend" id="legend"></p><ul class="bars" id="dbars"></ul>' +
+    '<div id="extra"></div>' +
+    '<div class="lovemeter">Kärlek 100 av 100<div class="bar" role="img" aria-label="Kärlek: 100 av 100"></div></div></div>';
   frame(h, d);
   root.addEventListener("click", function (e) {
     var n = e.target.closest(".names button"); if (n) return select(n.dataset.id);
-    var s = e.target.closest("[data-step]"); if (s) { var i = PL.indexOf(cur) + (+s.dataset.step); return select(PL[(i + PL.length) % PL.length].id); }
-    var c = e.target.closest(".chip"); if (c) showSerie(c.dataset.s);
+    var s = e.target.closest("[data-step]"); if (s) return step(+s.dataset.step);
+    var c = e.target.closest(".chip"); if (c) showSerie(c.dataset.s, 0);
   });
+  document.addEventListener("keydown", function (e) {
+    if (e.target.closest("input,textarea,select")) return;
+    if (e.key === "ArrowLeft") step(-1); else if (e.key === "ArrowRight") step(1);
+  });
+  var sx = null, st = $("stage");
+  st.addEventListener("touchstart", function (e) { sx = e.touches[0].clientX; }, { passive: true });
+  st.addEventListener("touchend", function (e) { if (sx === null) return; var dx = e.changedTouches[0].clientX - sx; sx = null; if (Math.abs(dx) > 40) step(dx < 0 ? 1 : -1); }, { passive: true });
   window.addEventListener("hashchange", function () { var id = location.hash.slice(1); if (id && (!cur || cur.id !== id)) select(id, true); });
   var start = location.hash.slice(1);
   select(PL.some(function (p) { return p.id === start; }) ? start : PL[0].id, true);
 }
+function step(n) { var i = PL.indexOf(cur) + n; select(PL[(i + PL.length) % PL.length].id); }
+function replay(el) { el.classList.remove("swap"); void el.offsetWidth; el.classList.add("swap"); }
+function yearCards(p) { return order(p).filter(function (x) { return /^\d{4}$/.test(x.serie); }); }
 function select(id, quiet) {
-  var p = PL.filter(function (x) { return x.id === id; })[0]; if (!p) return;
-  cur = p; curSerie = pick(cur, "2026").serie;
+  var p = PL.filter(function (x) { return x.id === id; })[0]; if (!p || p === cur) return;
+  var dir = cur ? (PL.indexOf(p) > PL.indexOf(cur) ? 1 : -1) : 0;
+  cur = p;
   document.querySelectorAll(".names button").forEach(function (b) { b.setAttribute("aria-pressed", b.dataset.id === id ? "true" : "false"); });
+  $("count").textContent = (PL.indexOf(cur) + 1) + " / " + PL.length;
   $("dn").innerHTML = esc(cur.namn) + ' ' + esc(cur.flagga || "");
-  var h = '<div class="chips" role="group" aria-label="Kortserie">' + order(cur).map(function (k) { return '<button type="button" class="chip" data-s="' + esc(k.serie) + '" aria-pressed="false">' + esc(seriesName(k.serie)) + '</button>'; }).join("") + '</div>';
-  h += '<h4>Så har kortet växt</h4><ul class="bars" id="dbars"></ul>';
-  if (cur.superkraft) h += '<h4>Superkraft (' + esc(seriesName(cur.superkraft.serie || "2024")) + ')</h4><div class="kraft"><b>' + esc(cur.superkraft.namn) + '</b>' + esc(cur.superkraft.text) + '</div>';
-  h += '<h4>Utmärkelser</h4><ul class="awards">' + ((cur.utnamningar || []).length ? cur.utnamningar.map(function (u) { return '<li>' + esc(u) + '</li>'; }).join("") : '<li>Här samlas utmärkelserna. Alla är nominerade.</li>') + '</ul>';
-  h += '<div class="lovemeter">Kärlek 100 av 100<div class="bar" role="img" aria-label="Kärlek: 100 av 100"></div></div>';
-  $("detail").innerHTML = h; showSerie(curSerie);
+  $("chips").innerHTML = order(cur).map(function (k) { return '<button type="button" class="chip" data-s="' + esc(k.serie) + '" aria-pressed="false">' + esc(seriesName(k.serie)) + '</button>'; }).join("");
+  var x = "";
+  if (cur.superkraft) x += '<h4>Superkraft (' + esc(seriesName(cur.superkraft.serie || "2024")) + ')</h4><div class="kraft"><b>' + esc(cur.superkraft.namn) + '</b>' + esc(cur.superkraft.text) + '</div>';
+  x += '<h4>Utmärkelser</h4><ul class="awards">' + ((cur.utnamningar || []).length ? cur.utnamningar.map(function (u) { return '<li>' + esc(u) + '</li>'; }).join("") : '<li>Här samlas utmärkelserna. Alla är nominerade.</li>') + '</ul>';
+  $("extra").innerHTML = x;
+  if (dir) { replay($("who")); replay($("extra")); }
+  var ys = yearCards(cur);
+  showSerie((ys.length ? ys[ys.length - 1] : cur.kort[0]).serie, dir);
   if (!quiet) { try { history.replaceState(null, "", "#" + id); } catch (e) {} }
 }
-function showSerie(sid) {
+var imgTok = 0;
+function swapImg(src, alt, dir) {
+  var img = $("dimg"), tok = ++imgTok;
+  if (!img.getAttribute("src")) { img.src = src; img.alt = alt; return; }
+  if (img.getAttribute("src") === src) return;
+  var pre = new Image(); pre.src = src;
+  img.style.setProperty("--dx", (-dir * 28) + "px"); img.classList.add("out");
+  setTimeout(function () {
+    if (tok !== imgTok) return;
+    function show() { if (tok !== imgTok) return; img.src = src; img.alt = alt; img.classList.add("jump"); img.style.setProperty("--dx", (dir * 28) + "px"); void img.offsetWidth; img.classList.remove("jump"); img.classList.remove("out"); }
+    if (pre.complete) show(); else { pre.onload = show; pre.onerror = show; }
+  }, 170);
+}
+function countTo(el, to) {
+  var from = +el.textContent || 0; if (from === to) { el.textContent = to; return; }
+  if (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) { el.textContent = to; return; }
+  var t0 = null; el._to = to;
+  function tick(t) { if (el._to !== to) return; if (!t0) t0 = t; var k = Math.min(1, (t - t0) / 500), e = 1 - Math.pow(1 - k, 3); el.textContent = Math.round(from + (to - from) * e); if (k < 1) requestAnimationFrame(tick); }
+  requestAnimationFrame(tick);
+}
+/* Statistik: har spelaren kort från flera år visas åren under varandra för varje värde, så att utvecklingen syns direkt. */
+function showSerie(sid, dir) {
   var k = pick(cur, sid); curSerie = k.serie;
-  var img = $("dimg"); img.src = k.bild; img.alt = cur.namn + ", " + (POS[k.pos] || k.pos).toLowerCase() + ", kortserie " + seriesName(k.serie);
+  swapImg(k.bild, cur.namn + ", " + (POS[k.pos] || k.pos).toLowerCase() + ", kortserie " + seriesName(k.serie), dir || 0);
   $("dpos").textContent = (POS[k.pos] || k.pos) + " · " + seriesName(k.serie);
-  document.querySelectorAll("#detail .chip").forEach(function (c) { c.setAttribute("aria-pressed", c.dataset.s === k.serie ? "true" : "false"); });
-  var ul = $("dbars"), same = ul.children.length === k.stats.length && Array.prototype.every.call(ul.children, function (li, i) { return li.dataset.l === k.stats[i][0]; });
-  if (!same) ul.innerHTML = k.stats.map(function (s) { return '<li data-l="' + esc(s[0]) + '"><span></span><div class="bar"><i style="width:0"></i></div><b></b></li>'; }).join("");
-  /* växtmarkeringar: bara uppåt, jämfört med närmast tidigare kortserie med årtal */
-  var yrs = order(cur).filter(function (x) { return /^\d{4}$/.test(x.serie); }), pi = yrs.indexOf(k), prev = pi > 0 ? yrs[pi - 1] : null;
-  Array.prototype.forEach.call(ul.children, function (li, i) {
-    var lab = k.stats[i][0], was = prev && prev.stats.filter(function (s) { return s[0] === lab; })[0], up = was ? k.stats[i][1] - was[1] : 0;
-    li.querySelector("span").innerHTML = esc(lab) + (up > 0 ? '<em title="Upp från ' + esc(prev.serie) + '">+' + up + ' &hearts;</em>' : "");
-  });
+  document.querySelectorAll("#chips .chip").forEach(function (c) { c.setAttribute("aria-pressed", c.dataset.s === k.serie ? "true" : "false"); });
+  var ys = yearCards(cur), compare = ys.length > 1 && ys.indexOf(k) >= 0, cards = compare ? ys : [k], last = cards[cards.length - 1];
+  var rows = last.stats.map(function (s) { return s[0]; });
+  cards.forEach(function (c) { c.stats.forEach(function (s) { if (rows.indexOf(s[0]) < 0) rows.push(s[0]); }); });
+  function val(c, lab) { var s = c.stats.filter(function (x) { return x[0] === lab; })[0]; return s ? s[1] : null; }
+  $("sh").textContent = compare ? "Utveckling " + cards[0].serie + " → " + last.serie : "Kortets värden · " + seriesName(k.serie);
+  $("legend").innerHTML = compare ? cards.map(function (c, i) { return '<span class="key k' + (i === cards.length - 1 ? 'new' : 'old') + '"></span>' + esc(c.serie); }).join(" ") : "";
+  var ul = $("dbars"), sig = cards.map(function (c) { return c.serie; }).join("|") + "::" + rows.join("|");
+  if (ul.dataset.sig !== sig) {
+    ul.dataset.sig = sig;
+    ul.innerHTML = rows.map(function (lab) {
+      return '<li><span class="lab">' + esc(lab) + '</span><div class="tracks">' + cards.map(function (c, i) { return '<div class="bar ' + (i === cards.length - 1 ? 'new' : 'old') + '" data-s="' + esc(c.serie) + '"><i style="width:0"></i></div>'; }).join("") + '</div>' +
+        '<span class="nums">' + (compare ? '<small>0</small><span class="arr" aria-hidden="true">→</span>' : '') + '<b>0</b></span><em></em></li>';
+    }).join("");
+    replay(ul);
+  }
+  ul.classList.toggle("compare", compare);
   requestAnimationFrame(function () { requestAnimationFrame(function () {
-    Array.prototype.forEach.call(ul.children, function (li, i) { li.querySelector("i").style.width = k.stats[i][1] + "%"; li.querySelector("b").textContent = k.stats[i][1]; });
+    Array.prototype.forEach.call(ul.children, function (li, r) {
+      var lab = rows[r], vNew = val(last, lab), vOld = compare ? val(cards[0], lab) : null;
+      cards.forEach(function (c, i) { var v = val(c, lab), bar = li.querySelectorAll(".bar")[i]; bar.querySelector("i").style.width = (v === null ? 0 : v) + "%"; bar.classList.toggle("on", c === k); });
+      var b = li.querySelector("b"), sm = li.querySelector("small"), arr = li.querySelector(".arr"), em = li.querySelector("em");
+      if (vNew === null) { b.textContent = "–"; } else countTo(b, vNew);
+      if (sm) { if (vOld === null) { sm.textContent = ""; arr.style.visibility = "hidden"; } else { arr.style.visibility = ""; countTo(sm, vOld); } }
+      var up = (vOld !== null && vNew !== null) ? vNew - vOld : 0;
+      em.textContent = up > 0 ? "+" + up + " ♥" : "";
+      li.setAttribute("aria-label", lab + ": " + (compare && vOld !== null ? cards[0].serie + " " + vOld + ", " + last.serie + " " + (vNew === null ? "saknas" : vNew) : (vNew === null ? "saknas" : vNew)));
+    });
   }); });
 }
 
