@@ -160,7 +160,7 @@ dialog.spelare::backdrop{background:rgba(30,10,14,.7)}
 
 /* Fraunces: mjuk (SOFT 100) för rubriker och namn */
 .pagetitle,.hero .giant span,.rows .score,.versus .us,.versus .them,.ph h3,.foot .love{font-weight:600;font-variation-settings:"SOFT" 100,"opsz" 72}
-.pagetitle{font-family:var(--display);margin:34px 0 4px;text-align:center;font-size:clamp(60px,19vw,118px);line-height:.92;letter-spacing:-.02em;color:var(--cream)}
+.pagetitle{font-family:var(--display);margin:34px 0 20px;text-align:center;font-size:clamp(60px,19vw,118px);line-height:.92;letter-spacing:-.02em;color:var(--cream)}
 .versus .us{font-size:44px}
 .versus .them{font-size:38px}
 
