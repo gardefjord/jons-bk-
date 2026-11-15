@@ -23,10 +23,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - name: Update data.json from Korpen
-        env:
-          KORPEN_USER: ${{ secrets.KORPEN_USER }}
-          KORPEN_PASS: ${{ secrets.KORPEN_PASS }}
+      - name: Update data.json from Korpen (public API, no login needed)
         run: node scripts/update.mjs
       - name: Commit data.json if it changed
         run: |
