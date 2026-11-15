@@ -18,21 +18,19 @@ function resOf(m) { var a = +m.gf, b = +m.ga; return a > b ? "W" : a < b ? "L" :
 var RES = { W: ["V", "Vinst"], D: ["O", "Oavgjort"], L: ["L", "Lärdom"] };
 
 /* ---------- grafik ---------- */
-var CREST = '<svg viewBox="0 0 68 78" aria-hidden="true"><path d="M34 3 62 11v27c0 19-12 30-28 37C18 68 6 57 6 38V11z" fill="#f6d51f" stroke="#1b1408" stroke-width="4" stroke-linejoin="round"/><path d="M34 12 54 17.5v20c0 14-8.500 22-20 28-11.500-6.500-20-14-20-28v-20z" fill="none" stroke="#d3202b" stroke-width="2.500"/><path d="M34 54c-9-6.500-14-11-14-17.500 0-4.500 3.300-7.500 7.200-7.500 2.800 0 5.300 1.500 6.800 4 1.500-2.500 4-4 6.800-4 3.900 0 7.200 3 7.200 7.500C48 43 43 47.500 34 54z" fill="#d3202b" stroke="#1b1408" stroke-width="2.500" stroke-linejoin="round"/></svg>';
-var SPARK = '<svg viewBox="0 0 60 60" aria-hidden="true"><path d="M30 0c1.500 18 4 26 30 30-26 4-28.500 12-30 30-1.500-18-4-26-30-30 26-4 28.500-12 30-30z" fill="#fff"/></svg>';
-var DEFS = '<svg width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="rough" x="-5%" y="-10%" width="110%" height="120%"><feTurbulence type="fractalNoise" baseFrequency=".035 .06" numOctaves="2" seed="7"/><feDisplacementMap in="SourceGraphic" scale="9"/></filter></svg>';
-var HEART = '<svg class="heart" viewBox="0 0 120 108" role="img" aria-label="Ett hjärta med texten Jons BK"><path d="M60 102C24 76 6 56 6 34 6 18 18 8 33 8c11 0 21 6 27 16C66 14 76 8 87 8c15 0 27 10 27 26 0 22-18 42-54 68z" fill="#d3202b" stroke="#1b1408" stroke-width="5" stroke-linejoin="round"/><text x="60" y="48" text-anchor="middle" font-family="Rammetto One,Arial Black,sans-serif" font-size="22" fill="#f6d51f" stroke="#1b1408" stroke-width="1.2" paint-order="stroke">JONS</text><text x="60" y="74" text-anchor="middle" font-family="Rammetto One,Arial Black,sans-serif" font-size="22" fill="#f6d51f" stroke="#1b1408" stroke-width="1.2" paint-order="stroke">BK</text></svg>';
+var DEFS = '<svg width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="wob" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency=".022" numOctaves="2" seed="4"/><feDisplacementMap in="SourceGraphic" scale="4.5"/></filter></svg>';
+var HEART = '<img class="heart" src="assets/logo/jons-bk-roed.png" width="170" height="169" alt="Jons BK-loggan: ett handritat hjärta med texten JONS BK">';
 var NAV = [["start", "Start", "index.html"], ["matcher", "Matcher", "matcher.html"], ["laget", "Laget", "laget.html"], ["galleri", "Galleri", "galleri.html"], ["om-oss", "Om oss", "om-oss.html"]];
 
 /* ---------- gemensam ram ---------- */
 function frame(inner, d) {
   d = d || {};
   var h = DEFS + '<div class="wrap">';
-  h += '<header class="mast"><a href="index.html" class="crest" aria-label="Jons BK, till startsidan">' + CREST + '</a><div><h1><a href="index.html">Jons BK</a></h1><p>Korpen Stockholm' + (d.league ? ', ' + esc(d.league) : '') + '</p></div></header>';
-  h += '<div class="ticker" aria-hidden="true"><span>Jons är kärlek <b>&hearts;</b> Söndagar på ' + esc(d.venue || "Långholmens BP") + ' <b>&hearts;</b> Passa bollen, passa kärleken <b>&hearts;</b> Styrka 95, kärlek 100 <b>&hearts;</b> Fotboll är vackert <b>&hearts;</b></span></div>';
+  h += '<header class="mast"><a href="index.html" class="logo"><img src="assets/logo/jons-bk-rosa.png" width="118" height="117" alt="Jons BK, till startsidan"></a><div><h1><a href="index.html">Jons BK</a></h1><p>Korpen Stockholm' + (d.league ? ', ' + esc(d.league) : '') + '</p></div></header>';
+  h += '<div class="ticker" aria-hidden="true"><span>Jons är kärlek <b>&hearts;</b> Söndagar på ' + esc(d.venue || "Långholmens BP") + ' <b>&hearts;</b> Passa bollen, passa kärleken <b>&hearts;</b> Alla får vara med <b>&hearts;</b> Styrka 95, kärlek 100 <b>&hearts;</b> Fotboll är vackert <b>&hearts;</b></span></div>';
   h += '<nav aria-label="Huvudmeny"><ul class="nav">' + NAV.map(function (n) { return '<li><a href="' + n[2] + '"' + (n[0] === PAGE ? ' aria-current="page"' : '') + '>' + n[1] + '</a></li>'; }).join("") + '</ul></nav>';
   h += '<main>' + inner + '</main>';
-  h += '<footer class="foot"><p class="love">Jons är kärlek</p><small>Bäst i Netscape Navigator 4.0 i 800&times;600</small></footer></div>';
+  h += '<footer class="foot"><img src="assets/logo/jons-bk-rosa.png" width="120" height="119" alt=""><p class="love">Jons är kärlek</p><small>Gjord med kärlek &hearts; Matcher och tabell från Korpen Stockholm</small></footer></div>';
   root.innerHTML = h;
 }
 function fail() { frame('<p class="note">Vi kunde inte hämta sidans innehåll just nu. Försök igen om en stund, så rullar bollen vidare.</p>'); }
@@ -46,9 +44,8 @@ function lists(s) {
   return { next: up[0], later: up.slice(1), done: done };
 }
 function nextCard(s, next) {
-  var h = '<section aria-labelledby="h-next"><div class="card"><div class="card-in plate">';
-  h += '<i class="screw s1"></i><i class="screw s2"></i><i class="screw s3"></i><i class="screw s4"></i><span class="spark sp1">' + SPARK + '</span><span class="spark sp2">' + SPARK + '</span>';
-  h += '<h2 class="nameplate" id="h-next"><span class="yr">20<br>26</span>' + CREST + '<span>Nästa<br>match</span></h2>';
+  var h = '<section aria-labelledby="h-next"><div class="card">';
+  h += '<h2 class="nameplate" id="h-next"><span class="yr">2026</span>Nästa match</h2>';
   if (next) {
     var d = when(next);
     h += '<div class="scene"><span class="sticker">' + esc(countdown(d)) + '</span><div class="versus"><span class="us">Jons BK</span><span class="vs">mot</span><span class="them">' + esc(next.opp) + '</span></div></div>';
@@ -57,7 +54,7 @@ function nextCard(s, next) {
     h += '<div class="scene"><p class="empty">Ingen match är inbokad just nu.<br>Håll kärleken varm.</p></div>';
     h += '<div class="flame"><dl class="stats"><dt>Plan</dt><dd>' + esc(s.venue) + '</dd><dt>Kärlek</dt><dd>100</dd></dl></div>';
   }
-  return h + '</div></div></section>';
+  return h + '</div></section>';
 }
 function upcoming(s, later) {
   if (!later.length) return "";
@@ -96,7 +93,7 @@ var DEMO = '<p class="note">Resultaten och tabellen här är exempel för att vi
 function pageStart(s) {
   var L = lists(s), h = (s.demo ? DEMO : "") + nextCard(s, L.next) + upcoming(s, L.later);
   if (L.done.length) h += sec("Formen just nu", formRow(L.done).replace(/^<p class="form">/, '<p class="form" style="border:0;margin:0">') + '<p class="fine">V = vinst, O = oavgjort, L = lärdom. Varje match är ett tillfälle att spela fotboll tillsammans.</p>');
-  h += sec("Välkommen", '<div class="prose"><p>Jons BK spelar sjumannafotboll i Korpen Stockholm. Här samlar vi matcherna, tabellen och oss själva, på det sätt som passar oss bäst: med värme, glädje och bollen som rullar.</p><p>Fotboll är vackert. Det är ännu vackrare tillsammans.</p></div>');
+  h += sec("Välkommen", '<div class="prose"><p>Jons BK spelar sjumannafotboll i Korpen Stockholm. Här samlar vi matcherna, tabellen och oss själva, på det sätt som passar oss bäst: med värme, glädje och bollen som rullar.</p><p>Fotboll är vackert. Det är ännu vackrare tillsammans, och alla får vara med.</p></div>');
   h += '<section class="sec"><h2>Utforska</h2><div class="panel"><ul class="tiles">' +
     '<li><a href="matcher.html"><div><b>Matcher &amp; tabell</b><span>Resultat, kommande matcher och ställning</span></div><i>&rarr;</i></a></li>' +
     '<li><a href="laget.html"><div><b>Laget</b><span>Ett spelarkort med superkraft för varje hjärta</span></div><i>&rarr;</i></a></li>' +
@@ -162,7 +159,7 @@ function pageGalleri(d, data) {
 
 /* ---------- om oss ---------- */
 function pageOmOss(d) {
-  var h = sec("Om Jons BK", HEART + '<div class="prose"><p>Jons BK är ett fotbollslag som spelar sjumannafotboll i Korpen Stockholm, ' + esc(d.league) + ', med ' + esc(d.venue) + ' som hemmaplan. Vi spelar för glädjen, för gemenskapen och för att fotboll är vackert.</p><p>Här är vi glada för varandras insatser, hejar på varandra och firar både stora och små ögonblick. Alla som vill spela boll får plats i vårt hjärta.</p></div><ul class="values"><li>Jons är kärlek</li><li>Passa bollen, passa kärleken</li><li>Fotboll är vackert</li></ul>');
+  var h = sec("Om Jons BK", HEART + '<div class="prose"><p>Jons BK är ett fotbollslag som spelar sjumannafotboll i Korpen Stockholm, ' + esc(d.league) + ', med ' + esc(d.venue) + ' som hemmaplan. Vi spelar för glädjen, för gemenskapen och för att fotboll är vackert.</p><p>Här är vi glada för varandras insatser, hejar på varandra och firar både stora och små ögonblick. Fotboll är till för alla, oavsett nivå, bakgrund eller dagsform, och alla som vill spela boll får plats i vårt hjärta.</p></div><ul class="values"><li>Jons är kärlek</li><li>Passa bollen, passa kärleken</li><li>Fotboll är vackert</li></ul>');
   h += sec("Följ ligan", '<div class="prose"><p>Den officiella tabellen och alla matcher i serien finns hos Korpen Stockholm: <a href="https://korpenstockholm.zoezi.se/serie/8346">Division 2 på korpenstockholm.zoezi.se</a>. Resultaten här på sidan uppdateras automatiskt därifrån.</p></div>');
   frame(h, d);
 }
