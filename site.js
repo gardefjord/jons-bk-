@@ -114,9 +114,10 @@ function order(p) { var ids = SERIES.map(function (s) { return s.id; }); return 
 function pick(p, id) { return p.kort.filter(function (k) { return k.serie === id; })[0] || p.kort[0]; }
 function pageLaget(d, data) {
   PL = data.spelare; SERIES = data.serier || [];
-  function names(list) { return list.map(function (p) { return '<li><button type="button" data-id="' + esc(p.id) + '" aria-pressed="false">' + esc(p.namn) + '</button></li>'; }).join(""); }
-  var trupp = PL.filter(function (p) { return p.grupp === "trupp"; }), vanner = PL.filter(function (p) { return p.grupp !== "trupp"; });
-  var h = '<nav class="index" aria-label="Välj spelare"><p class="idx">Truppen 2026</p><ul class="names">' + names(trupp) + '</ul>' + (vanner.length ? '<p class="idx">Fler som delat bollen med oss</p><ul class="names">' + names(vanner) + '</ul>' : '') + '</nav>';
+  PL = PL.slice().sort(function (x, y) { return x.namn.localeCompare(y.namn, "sv"); });
+  var h = '<div class="bubwrap"><div class="bubfade" id="bubfade"><div class="bubbles" id="bubbles" role="group" aria-label="Välj spelare">' +
+    PL.map(function (p) { return '<button type="button" class="bub" data-id="' + esc(p.id) + '" aria-current="false"><img class="av" src="assets/avatars/' + esc(p.id) + '.jpg" alt="" width="64" height="64" loading="lazy"><span>' + esc(p.namn) + '</span></button>'; }).join("") +
+    '</div><button type="button" class="bubnav l" data-scroll="-1" aria-label="Fler spelare åt vänster">&lsaquo;</button><button type="button" class="bubnav r" data-scroll="1" aria-label="Fler spelare åt höger">&rsaquo;</button></div></div>';
   h += '<div class="stage" id="stage"><button type="button" class="arrow" data-step="-1" aria-label="Föregående spelare">&larr;</button><img id="dimg" alt=""><button type="button" class="arrow" data-step="1" aria-label="Nästa spelare">&rarr;</button></div>';
   h += '<p class="count" id="count" aria-live="polite"></p>';
   h += '<div class="who" id="who"><h2 id="dn"></h2><p id="dpos"></p></div>';
@@ -126,7 +127,8 @@ function pageLaget(d, data) {
     '<div class="lovemeter">Kärlek 100 av 100<div class="bar" role="img" aria-label="Kärlek: 100 av 100"></div></div></div>';
   frame(h, d);
   root.addEventListener("click", function (e) {
-    var n = e.target.closest(".names button"); if (n) return select(n.dataset.id);
+    var n = e.target.closest(".bub"); if (n) return select(n.dataset.id);
+    var sc = e.target.closest("[data-scroll]"); if (sc) { var row = $("bubbles"); return row.scrollBy({ left: +sc.dataset.scroll * row.clientWidth * 0.7, behavior: "smooth" }); }
     var s = e.target.closest("[data-step]"); if (s) return step(+s.dataset.step);
     var c = e.target.closest(".chip"); if (c) showSerie(c.dataset.s, 0);
   });
@@ -138,8 +140,15 @@ function pageLaget(d, data) {
   st.addEventListener("touchstart", function (e) { sx = e.touches[0].clientX; }, { passive: true });
   st.addEventListener("touchend", function (e) { if (sx === null) return; var dx = e.changedTouches[0].clientX - sx; sx = null; if (Math.abs(dx) > 40) step(dx < 0 ? 1 : -1); }, { passive: true });
   window.addEventListener("hashchange", function () { var id = location.hash.slice(1); if (id && (!cur || cur.id !== id)) select(id, true); });
+  var bubs = $("bubbles"); bubs.addEventListener("scroll", bubFade, { passive: true }); window.addEventListener("resize", bubFade);
   var start = location.hash.slice(1);
   select(PL.some(function (p) { return p.id === start; }) ? start : PL[0].id, true);
+}
+/* Kantskuggor som visar att raden med spelare fortsätter åt det håll man kan scrolla */
+function bubFade() {
+  var r = $("bubbles"), w = $("bubfade"); if (!r || !w) return;
+  w.classList.toggle("more-l", r.scrollLeft > 4);
+  w.classList.toggle("more-r", r.scrollLeft + r.clientWidth < r.scrollWidth - 4);
 }
 function step(n) { var i = PL.indexOf(cur) + n; select(PL[(i + PL.length) % PL.length].id); }
 function replay(el) { el.classList.remove("swap"); void el.offsetWidth; el.classList.add("swap"); }
@@ -148,7 +157,9 @@ function select(id, quiet) {
   var p = PL.filter(function (x) { return x.id === id; })[0]; if (!p || p === cur) return;
   var dir = cur ? (PL.indexOf(p) > PL.indexOf(cur) ? 1 : -1) : 0;
   cur = p;
-  document.querySelectorAll(".names button").forEach(function (b) { b.setAttribute("aria-pressed", b.dataset.id === id ? "true" : "false"); });
+  document.querySelectorAll(".bub").forEach(function (b) { b.setAttribute("aria-current", b.dataset.id === id ? "true" : "false"); });
+  var bub = document.querySelector('.bub[aria-current="true"]'), row = $("bubbles");
+  if (bub && row) { row.scrollTo({ left: bub.offsetLeft - row.clientWidth / 2 + bub.offsetWidth / 2, behavior: dir ? "smooth" : "auto" }); setTimeout(bubFade, 60); requestAnimationFrame(bubFade); }
   $("count").textContent = (PL.indexOf(cur) + 1) + " / " + PL.length;
   $("dn").innerHTML = esc(cur.namn) + ' ' + esc(cur.flagga || "");
   $("chips").innerHTML = order(cur).map(function (k) { return '<button type="button" class="chip" data-s="' + esc(k.serie) + '" aria-pressed="false">' + esc(seriesName(k.serie)) + '</button>'; }).join("");
