@@ -10,7 +10,7 @@ if (!user || !pass) { console.error("Secrets missing."); process.exit(1); }
 
 const shape = (v, d = 0) =>
   Array.isArray(v) ? `array(${v.length})<${v.length ? shape(v[0], d + 1) : ""}>` :
-  v && typeof v === "object" ? (d > 2 ? "object" : "{" + Object.keys(v).slice(0, 25).map(k => `${k}:${shape(v[k], d + 1)}`).join(",") + "}") :
+  v && typeof v === "object" ? (d > 3 ? "object" : "{" + Object.keys(v).slice(0, 25).map(k => `${k}:${shape(v[k], d + 1)}`).join(",") + "}") :
   typeof v;
 const clean = u => { const x = new URL(u); return x.origin + x.pathname + (x.search ? "?" + [...x.searchParams.keys()].join("&") : ""); };
 
@@ -30,7 +30,7 @@ const notes = [];
 // Zoezi keeps polling, so "networkidle" never fires. Use a short fixed settle instead.
 const settle = async () => { await page.waitForLoadState("load", { timeout: 15000 }).catch(() => {}); await page.waitForTimeout(3000); };
 const go = async url => { await page.goto(url, { waitUntil: "domcontentloaded", timeout: 45000 }).catch(e => notes.push("Could not open " + url.replace(BASE, "/") + ": " + e.name)); await settle(); };
-await go(BASE);
+await go(BASE + "login");
 const captcha = await page.locator('iframe[src*="recaptcha"],iframe[src*="hcaptcha"],iframe[src*="turnstile"],.g-recaptcha,.h-captcha').count();
 if (captcha) notes.push("CAPTCHA present on the login page. Automated login is not possible.");
 
@@ -38,6 +38,12 @@ if (captcha) notes.push("CAPTCHA present on the login page. Automated login is n
 if (!(await page.locator('input[type="password"]').count())) {
   const link = page.getByRole("link", { name: /logga in|login|sign in/i }).first();
   if (await link.count()) { await link.click(); await settle(); }
+}
+if (!(await page.locator('input[type="password"]:visible').count())) {
+  const labels = await page.$$eval("button,a,[role=button]", els => els.map(e => (e.textContent || "").trim().slice(0, 40)).filter(Boolean).slice(0, 25));
+  notes.push("Login page buttons/links: " + JSON.stringify(labels));
+  const mail = page.getByText(/e-?post|mail|användarnamn|username/i).first();
+  if (await mail.count()) { await mail.click().catch(() => {}); await settle(); }
 }
 const pw = page.locator('input[type="password"]:visible').first();
 if (!(await pw.count())) notes.push("Could not find a visible password field.");
@@ -48,13 +54,16 @@ else {
   if (await page.locator('input[type="password"]:visible').count()) notes.push("Still on the login form after submitting. Wrong login, CAPTCHA, or 2FA.");
   if (await page.getByText(/verifieringskod|two-factor|2fa|engångskod|verification code/i).count()) notes.push("Two-factor / verification code requested. Automated login is not possible.");
 }
-// Visit likely pages so their data calls get recorded.
-for (const p of ["", "#/schedule", "#/results", "#/table", "#/team", "#/my-team"]) {
-  await go(BASE + p);
-}
+// Visit competition pages, then follow links that look like league data.
+const seen = new Set();
+const visit = async path => { if (seen.has(path)) return; seen.add(path); await go(new URL(path, BASE).href); };
+for (const p of ["schema", "tavlingskategorier", "aktuellt"]) await visit(p);
+const hrefs = async () => await page.$$eval("a[href^='/']", as => [...new Set(as.map(a => a.getAttribute("href")))]);
+const want = /tavling|serie|tabell|lag|match|resultat|mina|kalender|schema|kurser|division|liga/i;
+for (const h of (await hrefs()).filter(h => want.test(h)).slice(0, 14)) await visit(h);
 const links = await page.$$eval("a[href]", as => [...new Set(as.map(a => a.getAttribute("href")))].slice(0, 60));
 await browser.close();
 
-const out = { notes, links, requests: Object.fromEntries(found) };
+const out = { notes, visited: [...seen], links, requests: Object.fromEntries(found) };
 writeFileSync("probe-result.json", JSON.stringify(out, null, 2));
 console.log(JSON.stringify(out, null, 2));
