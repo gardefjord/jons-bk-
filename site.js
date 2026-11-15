@@ -18,15 +18,16 @@ function resOf(m) { var a = +m.gf, b = +m.ga; return a > b ? "W" : a < b ? "L" :
 var RES = { W: ["V", "Vinst"], D: ["O", "Oavgjort"], L: ["L", "Lärdom"] };
 
 /* ---------- grafik ---------- */
+var TITLES = { "start": "Start", "matcher": "Matcher och tabell", "laget": "Laget" };
 var NAV = [["start", "Start", "index.html"], ["matcher", "Matcher", "matcher.html"], ["laget", "Laget", "laget.html"]];
 
 /* ---------- gemensam ram ---------- */
 function frame(inner, d) {
   d = d || {};
   var h = '<div class="wrap">';
-  h += '<header class="mast"><a href="index.html" class="logo"><img src="assets/logo/jons-bk-rosa.png" width="230" height="229" alt="Jons BK, till startsidan"></a><h1 class="sr">Jons BK</h1><p>Korpen Stockholm' + (d.league ? ' · ' + esc(d.league) : '') + '</p></header>';
+  h += '<header class="mast"><a href="index.html" class="logo"><img src="assets/logo/jons-bk-rosa.png" width="230" height="229" alt="Jons BK, till startsidan"></a><p>Korpen Stockholm' + (d.league ? ' · ' + esc(d.league) : '') + '</p></header>';
   h += '<nav aria-label="Huvudmeny"><ul class="nav">' + NAV.map(function (n) { return '<li><a href="' + n[2] + '"' + (n[0] === PAGE ? ' aria-current="page"' : '') + '>' + n[1] + '</a></li>'; }).join("") + '</ul></nav>';
-  h += '<main>' + inner + '</main>';
+  h += '<main><h1 class="pagetitle">' + esc(TITLES[PAGE] || "") + '</h1>' + inner + '</main>';
   h += '<footer class="foot"><img src="assets/logo/jons-bk-rosa.png" width="44" height="44" alt=""><p class="love">Jons är kärlek</p><small>Matcher och tabell från Korpen Stockholm</small></footer></div>';
   root.innerHTML = h;
 }
@@ -94,7 +95,7 @@ var DEMO = '<p class="note">Resultaten och tabellen här är exempel för att vi
 function pageStart(s) {
   var L = lists(s), h = (s.demo ? DEMO : "") + nextCard(s, L.next) + upcoming(s, L.later);
   if (L.done.length) h += sec("Senaste resultat", resRows(L.done.slice(0, 5)) + LEGEND + '<p class="more"><a href="matcher.html#spelade">Alla resultat och tabellen <span aria-hidden="true">&rarr;</span></a></p>');
-  h += '<section class="sec"><h2>Utforska</h2><div class="panel"><ul class="tiles">' +
+  h += '<section class="sec"><h2>Utforska</h2><div class="panel plain"><ul class="tiles">' +
     '<li><a href="matcher.html"><div><b>Matcher &amp; tabell</b><span>Resultat, kommande matcher och ställning</span></div><i>&rarr;</i></a></li>' +
     '<li><a href="laget.html"><div><b>Laget</b><span>Ett spelarkort med superkraft för varje hjärta</span></div><i>&rarr;</i></a></li>' +
     '</ul></div></section>';
@@ -113,7 +114,7 @@ function order(p) { var ids = SERIES.map(function (s) { return s.id; }); return 
 function pick(p, id) { return p.kort.filter(function (k) { return k.serie === id; })[0] || p.kort[0]; }
 function tile(p) {
   var k = pick(p, "2026");
-  return '<li><button class="tile" data-id="' + esc(p.id) + '" aria-label="Öppna spelarkortet för ' + esc(p.namn) + '"><img src="' + esc(k.bild) + '" width="250" height="390" loading="lazy" alt="' + esc(p.namn) + ', ' + esc((POS[k.pos] || k.pos).toLowerCase()) + ', Jons BK spelarkort"><b>' + esc(p.namn) + '</b><small>' + esc(POS[k.pos] || k.pos) + '</small></button></li>';
+  return '<li><button class="tile" data-id="' + esc(p.id) + '" aria-label="Öppna spelarkortet för ' + esc(p.namn) + '"><img src="' + esc(k.bild) + '" width="250" height="390" loading="lazy" alt="' + esc(p.namn) + ', ' + esc((POS[k.pos] || k.pos).toLowerCase()) + ', Jons BK spelarkort"><b>' + esc(p.namn) + '</b><small>' + esc(POS[k.pos] || k.pos) + '</small><span class="open">Visa kort</span></button></li>';
 }
 function pageLaget(d, data) {
   PL = data.spelare; SERIES = data.serier || [];
