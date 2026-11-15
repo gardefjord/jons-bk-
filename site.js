@@ -24,10 +24,10 @@ var NAV = [["start", "Start", "index.html"], ["matcher", "Matcher", "matcher.htm
 function frame(inner, d) {
   d = d || {};
   var h = '<div class="wrap">';
-  h += '<header class="mast"><a href="index.html" class="logo"><img src="assets/logo/jons-bk-roed.png" width="230" height="229" alt="Jons BK, till startsidan"></a><h1 class="sr">Jons BK</h1><p>Korpen Stockholm' + (d.league ? ' · ' + esc(d.league) : '') + '</p></header>';
+  h += '<header class="mast"><a href="index.html" class="logo"><img src="assets/logo/jons-bk-rosa.png" width="230" height="229" alt="Jons BK, till startsidan"></a><h1 class="sr">Jons BK</h1><p>Korpen Stockholm' + (d.league ? ' · ' + esc(d.league) : '') + '</p></header>';
   h += '<nav aria-label="Huvudmeny"><ul class="nav">' + NAV.map(function (n) { return '<li><a href="' + n[2] + '"' + (n[0] === PAGE ? ' aria-current="page"' : '') + '>' + n[1] + '</a></li>'; }).join("") + '</ul></nav>';
   h += '<main>' + inner + '</main>';
-  h += '<footer class="foot"><img src="assets/logo/jons-bk-roed.png" width="44" height="44" alt=""><p class="love">Jons är kärlek</p><small>Matcher och tabell från Korpen Stockholm</small></footer></div>';
+  h += '<footer class="foot"><img src="assets/logo/jons-bk-rosa.png" width="44" height="44" alt=""><p class="love">Jons är kärlek</p><small>Matcher och tabell från Korpen Stockholm</small></footer></div>';
   root.innerHTML = h;
 }
 function fail() { frame('<p class="note">Vi kunde inte hämta sidans innehåll just nu. Försök igen om en stund, så rullar bollen vidare.</p>'); }
