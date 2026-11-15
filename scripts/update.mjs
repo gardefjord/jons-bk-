@@ -1,6 +1,7 @@
 // Updates data.json from Korpen's public Zoezi API. No login or secrets needed:
 // the division's matches and teams are public (same data the /serie/<id> page shows).
-// The table is computed from the matches, so it cannot disagree with the results shown.
+// The table comes from Zoezi's own table endpoint (includes walkovers). If that cannot be read
+// and validated, it falls back to a table computed from the match results.
 import { readFileSync, writeFileSync } from "node:fs";
 
 const BASE = "https://korpenstockholm.zoezi.se";
@@ -44,6 +45,7 @@ if (usId === undefined) throw new Error(`Team "${US}" not found in the division.
 
 const table = new Map([...teams.values()].map(n => [n, { team: n, w: 0, d: 0, l: 0, gf: 0, ga: 0 }]));
 const matches = [];
+const odd = [];
 for (const m of rawMatches) {
   const [a, b] = m.teams || [];
   if (!a || !b) continue;
@@ -57,6 +59,7 @@ for (const m of rawMatches) {
     }
   }
   if (a.id !== usId && b.id !== usId) continue;
+  if (!played && (m.finished === true || (m.result || []).length)) odd.push(m);
   const us = a.id === usId ? a : b, them = a.id === usId ? b : a;
   const { date, time } = splitTime(m.startTime);
   matches.push({ date, time, opp: teams.get(them.id) ?? them.name, pitch: m.location || "", gf: played ? goals(us.id) : null, ga: played ? goals(them.id) : null });
@@ -64,8 +67,32 @@ for (const m of rawMatches) {
 matches.sort((x, y) => (x.date + x.time).localeCompare(y.date + y.time));
 if (!matches.length) throw new Error(`No matches found for ${US}. Keeping the old data.json.`);
 
+// Official table (handles walkovers, deductions). Validate every row before trusting it.
+function officialTable(res) {
+  const cols = (res.columns || []).map(c => `${c.name || ""} ${c.shortname || ""}`);
+  const ix = re => cols.findIndex(c => re.test(c));
+  const diffCol = ix(/\+\/-/);
+  const I = { p: ix(/matcher/i), w: ix(/vinst/i), d: ix(/oavgjord/i), l: ix(/förlust/i), gf: ix(/(^|\s)gjorda/i), ga: ix(/insläppta/i) };
+  if (Object.values(I).some(i => i < 0) || !Array.isArray(res.rows) || res.rows.length !== (res.teams || []).length) return null;
+  const out = [];
+  for (let r = 0; r < res.rows.length; r++) {
+    const row = res.rows[r], name = teams.get(res.teams[r]);
+    const v = Object.fromEntries(Object.entries(I).map(([k, i]) => [k, Number(row[i])]));
+    if (!name || Object.values(v).some(n => !Number.isFinite(n)) || v.w + v.d + v.l !== v.p) return null;
+    if (diffCol >= 0 && Number(row[diffCol]) !== v.gf - v.ga) return null; // goals must add up
+    out.push({ team: name, w: v.w, d: v.d, l: v.l, gf: v.gf, ga: v.ga });
+  }
+  return out;
+}
+let finalTable = [...table.values()], source = "computed from results";
+try {
+  const off = officialTable(await getJson(`/api/memberapi/teamsport/result/for_division?division_id=${DIVISION_ID}`));
+  if (off) { finalTable = off; source = "Zoezi table"; } else console.warn("Could not read Zoezi's table; using computed table.");
+} catch (e) { console.warn("Zoezi table request failed (" + e.message + "); using computed table."); }
+for (const m of odd) console.log("Unusual match (public league data):", JSON.stringify({ start: m.startTime, finished: m.finished, teams: m.teams.map(x => x.name), result: (m.result || []).map(r => ({ team: r.team_id, result: r.result, invalid_id: r.invalid_id })) }));
+
 const old = JSON.parse(readFileSync("data.json", "utf8"));
-const next = { ...old, demo: false, matches, table: [...table.values()] };
+const next = { ...old, demo: false, matches, table: finalTable };
 writeFileSync("data.json", JSON.stringify(next, null, 2) + "\n");
 const done = matches.filter(m => m.gf !== null).length;
-console.log(`data.json updated: ${matches.length} matches (${done} played), ${next.table.length} teams.`);
+console.log(`data.json updated: ${matches.length} matches (${done} played), ${next.table.length} teams. Table: ${source}.`);
