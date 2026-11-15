@@ -25,12 +25,18 @@ var NAV = [["start", "Start", "index.html"], ["matcher", "Matcher", "matcher.htm
 function frame(inner, d) {
   d = d || {};
   var h = '<div class="wrap">';
-  var logo = '<a href="index.html" class="logo"><img src="assets/logo/jons-bk-rosa.png" width="230" height="229" alt="Jons BK, till startsidan"></a>';
+  var logo = '<a href="index.html" class="logo"><img src="assets/logo/jons-bk-rosa.png" width="230" height="229" alt="Jons BK, till startsidan" decoding="async" fetchpriority="high"></a>';
   h += '<header class="mast' + (PAGE === "start" ? ' home' : '') + '">' + logo + '</header>';
   h += '<nav aria-label="Huvudmeny"><ul class="nav">' + NAV.map(function (n) { return '<li><a href="' + n[2] + '"' + (n[0] === PAGE ? ' aria-current="page"' : '') + '>' + n[1] + '</a></li>'; }).join("") + '</ul></nav>';
   h += '<main>' + (PAGE === "start" ? '<h1 class="sr">Jons BK</h1>' : '<h1 class="pagetitle">' + esc(TITLES[PAGE] || "") + '</h1>') + inner + '</main>';
   h += '<footer class="foot"><img src="assets/logo/jons-bk-rosa.png" width="44" height="44" alt=""><p class="love">Jons är kärlek</p><small>Matcher och tabell från Korpen Stockholm</small></footer></div>';
   root.innerHTML = h;
+  /* Loggan visas direkt om den redan är hämtad, annars tonas den in när den är klar (ingen halvladdad bild syns) */
+  var li = root.querySelector(".mast .logo img");
+  if (li) {
+    if (li.complete) li.className = "instant";
+    else { li.addEventListener("load", function () { li.className = "ready"; }); li.addEventListener("error", function () { li.className = "instant"; }); }
+  }
 }
 function fail() { frame('<p class="note">Vi kunde inte hämta sidans innehåll just nu. Försök igen om en stund, så rullar bollen vidare.</p>'); }
 function sec(title, body, id) { return '<section class="sec"' + (id ? ' id="' + id + '"' : '') + '><h2>' + title + '</h2><div class="panel">' + body + '</div></section>'; }

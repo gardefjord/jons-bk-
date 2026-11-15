@@ -22,7 +22,10 @@ a{color:inherit}
 
 /* huvud */
 .mast{display:flex;flex-direction:column;align-items:center;margin-bottom:18px}
-.mast .logo img{width:min(230px,60vw);height:auto;margin:2px 0 4px}
+.mast .logo{display:block;width:min(230px,60vw);aspect-ratio:640/636;margin:2px 0 4px}
+.mast .logo img{display:block;width:100%;height:100%;opacity:0}
+.mast .logo img.instant{opacity:1}
+.mast .logo img.ready{opacity:1;transition:opacity .4s ease-out}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
 /* meny: enkla textlänkar. Aktuell sida är ljus och understruken. */
