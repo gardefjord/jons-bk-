@@ -872,6 +872,37 @@
        86
       ]
      ]
+    },
+    {
+     "serie": "2026",
+     "pos": "LB",
+     "bild": "assets/kort/2026/adam-gu.jpg",
+     "stats": [
+      [
+       "Fart",
+       81
+      ],
+      [
+       "Dribbling",
+       79
+      ],
+      [
+       "Styrka",
+       89
+      ],
+      [
+       "Skott",
+       80
+      ],
+      [
+       "Passning",
+       85
+      ],
+      [
+       "Uthållighet",
+       82
+      ]
+     ]
     }
    ],
    "utnamningar": [],
@@ -887,7 +918,7 @@
   {
    "id": "jorn",
    "namn": "Jörn",
-   "grupp": "vanner",
+   "grupp": "trupp",
    "flagga": "🇸🇪",
    "kort": [
     {
@@ -918,6 +949,37 @@
       [
        "Uthållighet",
        99
+      ]
+     ]
+    },
+    {
+     "serie": "2026",
+     "pos": "CM",
+     "bild": "assets/kort/2026/jorn.jpg",
+     "stats": [
+      [
+       "Fart",
+       86
+      ],
+      [
+       "Dribbling",
+       81
+      ],
+      [
+       "Styrka",
+       79
+      ],
+      [
+       "Skott",
+       82
+      ],
+      [
+       "Passning",
+       80
+      ],
+      [
+       "Uthållighet",
+       95
       ]
      ]
     }
