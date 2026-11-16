@@ -118,61 +118,130 @@ var PL = null, SERIES = [], cur = null, curSerie = null;
 function seriesName(id) { var s = SERIES.filter(function (x) { return x.id === id; })[0]; return s ? s.namn : id; }
 function order(p) { var ids = SERIES.map(function (s) { return s.id; }); return p.kort.slice().sort(function (a, b) { return ids.indexOf(a.serie) - ids.indexOf(b.serie); }); }
 function pick(p, id) { return p.kort.filter(function (k) { return k.serie === id; })[0] || p.kort[0]; }
+/* Spelarlista med kortlåda: ett tryck öppnar spelarens kort som en låda över hela skärmen */
+var SHORTP = { ST: "Anfallare", LW: "Vänsterytter", RW: "Högerytter", CM: "Mittfältare", LB: "Vänsterback", RB: "Högerback", CB: "Mittback", MB: "Mittback", GK: "Målvakt" };
+function pos(p) { return SHORTP[pick(p, "2026").pos] || ""; }
+var SHEET = '<div class="sheet-backdrop" id="sbk"></div>' +
+  '<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-label="Spelarkort" aria-hidden="true" tabindex="-1">' +
+  '<div class="sheet-head" id="shead"><span class="grab"></span><button type="button" class="sx" id="sclose" aria-label="Stäng">&times;</button></div>' +
+  '<div class="sheet-body" id="sbody">' +
+  '<div class="stage" id="stage"><img id="dimg" alt=""></div>' +
+  '<div class="pager"><button type="button" class="pg" data-go="-1" aria-label="Föregående spelare">&larr;</button><p class="count" id="count" aria-live="polite"></p><button type="button" class="pg" data-go="1" aria-label="Nästa spelare">&rarr;</button></div>' +
+  '<div class="who" id="who"><h2 id="dn"></h2><p id="dpos"></p></div>' +
+  '<div class="detail"><div class="chips" id="chips" role="group" aria-label="Kortserie"></div><h4 id="sh"></h4><p class="legend" id="legend"></p><ul class="bars" id="dbars"></ul><div id="extra"></div>' +
+  '<div class="lovemeter">Kärlek 100 av 100<div class="bar" role="img" aria-label="Kärlek: 100 av 100"></div></div></div>' +
+  '</div></div>';
+
 function pageLaget(d, data) {
-  PL = data.spelare; SERIES = data.serier || [];
-  PL = PL.slice().sort(function (x, y) { return x.namn.localeCompare(y.namn, "sv"); });
-  var h = '<div class="bubwrap"><div class="bubfade" id="bubfade"><div class="bubbles" id="bubbles" role="group" aria-label="Välj spelare">' +
-    PL.map(function (p) { return '<button type="button" class="bub" data-id="' + esc(p.id) + '" aria-current="false"><img class="av" src="assets/avatars/' + esc(p.id) + '.jpg" alt="" width="64" height="64" loading="lazy"><span>' + esc(p.namn) + '</span></button>'; }).join("") +
-    '</div><button type="button" class="bubnav l" data-scroll="-1" aria-label="Fler spelare åt vänster">&lsaquo;</button><button type="button" class="bubnav r" data-scroll="1" aria-label="Fler spelare åt höger">&rsaquo;</button></div></div>';
-  h += '<div class="stage" id="stage"><img id="dimg" alt=""></div>';
-  h += '<div class="pager"><button type="button" class="pg" data-step="-1" aria-label="Föregående spelare">&larr;</button><p class="count" id="count" aria-live="polite"></p><button type="button" class="pg" data-step="1" aria-label="Nästa spelare">&rarr;</button></div>';
-  h += '<div class="who" id="who"><h2 id="dn"></h2><p id="dpos"></p></div>';
-  h += '<div class="detail"><div class="chips" id="chips" role="group" aria-label="Kortserie"></div>' +
-    '<h4 id="sh"></h4><p class="legend" id="legend"></p><ul class="bars" id="dbars"></ul>' +
-    '<div id="extra"></div>' +
-    '<div class="lovemeter">Kärlek 100 av 100<div class="bar" role="img" aria-label="Kärlek: 100 av 100"></div></div></div>';
-  frame(h, d);
-  root.addEventListener("click", function (e) {
-    var n = e.target.closest(".bub"); if (n) return select(n.dataset.id);
-    var sc = e.target.closest("[data-scroll]"); if (sc) { var row = $("bubbles"); return row.scrollBy({ left: +sc.dataset.scroll * row.clientWidth * 0.7, behavior: "smooth" }); }
-    var s = e.target.closest("[data-step]"); if (s) return step(+s.dataset.step);
+  SERIES = data.serier || [];
+  PL = data.spelare.slice().sort(function (a, b) { return a.namn.localeCompare(b.namn, "sv"); });
+  var h = '<ul class="plist" aria-label="Spelare">', last = "";
+  PL.forEach(function (p) {
+    var L = p.namn.charAt(0).toUpperCase();
+    if (L !== last) { last = L; h += '<li class="pl-letter" aria-hidden="true">' + L + '</li>'; }
+    var kk = pick(p, "2026");
+    h += '<li><button type="button" class="prow" data-id="' + esc(p.id) + '"><img class="av" src="assets/avatars/' + esc(p.id) + '.jpg" alt="" width="64" height="64" loading="lazy"><span class="pt"><b>' + esc(p.namn) + ' ' + esc(p.flagga || "") + '</b><small>' + esc(pos(p)) + '</small>' + (p.superkraft ? '<em>' + esc(p.superkraft.namn) + '</em>' : '') + '</span><span class="mini"><img src="' + esc(kk.bild) + '" alt="" width="250" height="390" loading="lazy"></span></button></li>';
+  });
+  frame(h + '</ul>', d);
+  document.body.insertAdjacentHTML("beforeend", SHEET);
+
+  var sheet = $("sheet"), sbody = $("sbody"), shead = $("shead"), bk = $("sbk"), isOpen = false, opener = null;
+  function go(n) { var i = (PL.indexOf(cur) + n + PL.length) % PL.length; select(PL[i].id, true); try { history.replaceState({ sheet: PL[i].id }, "", "#" + PL[i].id); } catch (e) {} sbody.scrollTo({ top: 0, behavior: "smooth" }); }
+  var OPEN_MS = 520, CLOSE_MS = 440, moveTimer = null;
+  function insetFor(r) { return "inset(" + Math.max(0, r.top) + "px " + Math.max(0, innerWidth - r.right) + "px " + Math.max(0, innerHeight - r.bottom) + "px " + Math.max(0, r.left) + "px round 2px)"; }
+  function rowEl(id) { return document.querySelector('.prow[data-id="' + id + '"]'); }
+  function reduced() { return matchMedia("(prefers-reduced-motion: reduce)").matches; }
+  function openSheet(id, fromHash) {
+    select(id, true); isOpen = true; sbody.scrollTop = 0; sheet.style.transform = ""; bk.style.opacity = "";
+    clearTimeout(moveTimer); sheet.classList.remove("morph-close");
+    var row = fromHash ? null : rowEl(id), r = row && row.getBoundingClientRect();
+    var morph = r && r.bottom > 0 && r.top < innerHeight && !reduced();
+    if (morph) {
+      sheet.classList.add("morph-open");
+      sheet.style.clipPath = insetFor(r); sheet.style.setProperty("--sheet-bg", "var(--panel)");
+      void sheet.offsetWidth;
+      sheet.style.setProperty("--sheet-bg", "var(--bg)");
+      sheet.style.clipPath = "inset(0px round 0px)";
+      moveTimer = setTimeout(function () { sheet.classList.remove("morph-open"); sheet.style.clipPath = ""; sheet.style.removeProperty("--sheet-bg"); }, OPEN_MS + 40);
+    }
+    document.body.classList.add("sheet-open"); sheet.setAttribute("aria-hidden", "false");
+    setTimeout(function () { sheet.focus({ preventScroll: true }); }, 60);
+    if (!fromHash) { try { history.pushState({ sheet: id }, "", "#" + id); } catch (e) {} }
+  }
+  function finishClose() {
+    sheet.classList.remove("morph-close"); sheet.style.clipPath = ""; sheet.style.removeProperty("--sheet-bg"); sheet.style.transition = "none";
+    void sheet.offsetWidth; sheet.style.transition = "";
+  }
+  function closeSheet(fromPop, slide) {
+    if (!isOpen) return; isOpen = false;
+    sheet.classList.remove("dragging"); bk.style.opacity = "";
+    var row = !slide && cur ? rowEl(cur.id) : null, morph = row && !reduced();
+    if (morph) { row.scrollIntoView({ block: "center", behavior: "instant" }); }
+    var r = morph && row.getBoundingClientRect();
+    if (morph && r.bottom > 0 && r.top < innerHeight) {
+      clearTimeout(moveTimer);
+      sheet.style.transform = ""; sheet.classList.add("morph-close"); sheet.style.clipPath = "inset(0px round 0px)"; sheet.style.setProperty("--sheet-bg", "var(--bg)");
+      void sheet.offsetWidth;
+      sheet.style.setProperty("--sheet-bg", "var(--panel)"); sheet.style.clipPath = insetFor(r);
+      moveTimer = setTimeout(finishClose, CLOSE_MS + 40);
+    } else { sheet.style.transform = ""; }
+    document.body.classList.remove("sheet-open"); sheet.setAttribute("aria-hidden", "true");
+    if (opener) { try { (rowEl(cur ? cur.id : "") || opener).focus({ preventScroll: true }); } catch (e) {} }
+    if (!fromPop) { try { if (history.state && history.state.sheet) history.back(); else history.replaceState(null, "", location.pathname + location.search); } catch (e) {} }
+  }
+  window.addEventListener("popstate", function () {
+    var s = history.state && history.state.sheet;
+    if (isOpen && !s) closeSheet(true); else if (!isOpen && s) openSheet(s, true);
+  });
+  window.addEventListener("hashchange", function () { var id = location.hash.slice(1); if (!isOpen && PL.some(function (p) { return p.id === id; })) openSheet(id, true); });
+  root.addEventListener("click", function (e) { var r = e.target.closest(".prow"); if (r) { opener = r; openSheet(r.dataset.id); } });
+  sheet.addEventListener("click", function (e) {
+    if (e.target.closest("#sclose")) return closeSheet();
+    var g = e.target.closest("[data-go]"); if (g) return go(+g.dataset.go);
     var c = e.target.closest(".chip"); if (c) showSerie(c.dataset.s, 0);
   });
   document.addEventListener("keydown", function (e) {
-    if (e.target.closest("input,textarea,select")) return;
-    if (e.key === "ArrowLeft") step(-1); else if (e.key === "ArrowRight") step(1);
+    if (!isOpen) return;
+    if (e.key === "Escape") closeSheet(); else if (e.key === "ArrowLeft") go(-1); else if (e.key === "ArrowRight") go(1);
   });
-  var sx = null, st = $("stage");
-  st.addEventListener("touchstart", function (e) { sx = e.touches[0].clientX; }, { passive: true });
-  st.addEventListener("touchend", function (e) { if (sx === null) return; var dx = e.changedTouches[0].clientX - sx; sx = null; if (Math.abs(dx) > 40) step(dx < 0 ? 1 : -1); }, { passive: true });
-  window.addEventListener("hashchange", function () { var id = location.hash.slice(1); if (id && (!cur || cur.id !== id)) select(id, true); });
-  var bubs = $("bubbles"); bubs.addEventListener("scroll", bubFade, { passive: true }); window.addEventListener("resize", sizeBubbles); requestAnimationFrame(sizeBubbles);
-  var start = location.hash.slice(1);
-  select(PL.some(function (p) { return p.id === start; }) ? start : PL[0].id, true);
+
+  /* dra ner för att stänga: i handtaget (mus och touch) och i innehållet när det ligger längst upp */
+  var drag = null;
+  function dStart(y) { drag = { y0: y, dy: 0, t0: performance.now() }; sheet.classList.add("dragging"); }
+  function dMove(y) { drag.dy = Math.max(0, y - drag.y0); sheet.style.transform = "translateY(" + drag.dy + "px)"; bk.style.opacity = String(1 - Math.min(0.6, drag.dy / (innerHeight * 0.9))); }
+  function dEnd() {
+    if (!drag) return; var dy = drag.dy, v = dy / Math.max(1, performance.now() - drag.t0); drag = null;
+    sheet.classList.remove("dragging");
+    if (dy > 110 || (dy > 30 && v > 0.55)) closeSheet(false, true); else { sheet.style.transform = ""; bk.style.opacity = ""; }
+  }
+  shead.addEventListener("pointerdown", function (e) { if (e.target.closest("#sclose")) return; shead.setPointerCapture(e.pointerId); dStart(e.clientY); });
+  shead.addEventListener("pointermove", function (e) { if (drag) dMove(e.clientY); });
+  shead.addEventListener("pointerup", dEnd); shead.addEventListener("pointercancel", dEnd);
+  var ty = null, tx = null, mode = null;
+  sbody.addEventListener("touchstart", function (e) { ty = e.touches[0].clientY; tx = e.touches[0].clientX; mode = null; }, { passive: true });
+  sbody.addEventListener("touchmove", function (e) {
+    if (ty === null) return; var dy = e.touches[0].clientY - ty, dx = e.touches[0].clientX - tx;
+    if (!mode) { if (Math.abs(dx) > 10 && Math.abs(dx) > Math.abs(dy)) mode = "x"; else if (dy > 8 && sbody.scrollTop <= 0) { mode = "y"; dStart(e.touches[0].clientY - dy); } else if (Math.abs(dy) > 8) mode = "scroll"; }
+    if (mode === "y" && drag) { dMove(e.touches[0].clientY); e.preventDefault(); }
+  }, { passive: false });
+  sbody.addEventListener("touchend", function (e) {
+    if (mode === "y") dEnd();
+    else if (mode === "x" && e.target.closest("#stage")) { var dx = e.changedTouches[0].clientX - tx; if (Math.abs(dx) > 40) go(dx < 0 ? 1 : -1); }
+    ty = null; mode = null;
+  }, { passive: true });
+  bk.addEventListener("click", function () { closeSheet(); });
+
+  var h0 = location.hash.slice(1);
+  if (h0 && PL.some(function (p) { return p.id === h0; })) { opener = null; openSheet(h0, true); try { history.replaceState({ sheet: h0 }, "", "#" + h0); } catch (e) {} }
 }
-/* Bubblornas bredd räknas så att en halv bubbla alltid sticker fram i kanten: då syns det att raden går att svepa */
-function sizeBubbles() {
-  var r = $("bubbles"); if (!r) return;
-  var R = r.clientWidth, pad = matchMedia("(hover:hover)").matches ? 38 : 20, gap = 12, k = Math.max(3, Math.floor((R - pad) / 72));
-  r.style.setProperty("--bw", Math.min(76, Math.max(52, (R - pad - gap * k) / (k + 0.5))) + "px");
-  bubFade();
-}
-/* Kantskuggor som visar att raden med spelare fortsätter åt det håll man kan scrolla */
-function bubFade() {
-  var r = $("bubbles"), w = $("bubfade"); if (!r || !w) return;
-  w.classList.toggle("more-l", r.scrollLeft > 4);
-  w.classList.toggle("more-r", r.scrollLeft + r.clientWidth < r.scrollWidth - 4);
-}
-function step(n) { var i = PL.indexOf(cur) + n; select(PL[(i + PL.length) % PL.length].id); }
+
+
 function replay(el) { el.classList.remove("swap"); void el.offsetWidth; el.classList.add("swap"); }
 function yearCards(p) { return order(p).filter(function (x) { return /^\d{4}$/.test(x.serie); }); }
 function select(id, quiet) {
   var p = PL.filter(function (x) { return x.id === id; })[0]; if (!p || p === cur) return;
   var dir = cur ? (PL.indexOf(p) > PL.indexOf(cur) ? 1 : -1) : 0;
   cur = p;
-  document.querySelectorAll(".bub").forEach(function (b) { b.setAttribute("aria-current", b.dataset.id === id ? "true" : "false"); });
-  var bub = document.querySelector('.bub[aria-current="true"]'), row = $("bubbles");
-  if (bub && row) { row.scrollTo({ left: bub.offsetLeft - row.clientWidth / 2 + bub.offsetWidth / 2, behavior: dir ? "smooth" : "auto" }); setTimeout(bubFade, 60); requestAnimationFrame(bubFade); }
   $("count").textContent = (PL.indexOf(cur) + 1) + " / " + PL.length;
   $("dn").innerHTML = esc(cur.namn) + ' ' + esc(cur.flagga || "");
   $("chips").innerHTML = order(cur).map(function (k) { return '<button type="button" class="chip" data-s="' + esc(k.serie) + '" aria-pressed="false">' + esc(seriesName(k.serie)) + '</button>'; }).join("");

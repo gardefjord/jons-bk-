@@ -102,25 +102,6 @@ table.lg{width:100%;border-collapse:collapse;font-size:14px;font-variant-numeric
 .lg td.pts{font-weight:800}
 
 /* laget: ett stort kort i taget */
-/* spelarraden: ansikten i bokstavsordning, sticky, med kantskuggor som visar att fler finns */
-.bubwrap{position:sticky;top:0;z-index:30;margin:6px -16px 0;padding:10px 16px 8px;background:var(--bg);border-bottom:1px solid var(--line)}
-.bubfade{position:relative}
-.bubfade::before,.bubfade::after{content:"";position:absolute;top:0;bottom:0;width:64px;z-index:2;pointer-events:none;opacity:0;transition:opacity .25s}
-.bubfade::before{left:-2px;background:linear-gradient(to right,rgba(169,51,64,.94),rgba(169,51,64,0))}
-.bubfade::after{right:-2px;background:linear-gradient(to left,rgba(169,51,64,.94),rgba(169,51,64,0))}
-.bubfade.more-l::before,.bubfade.more-r::after{opacity:1}
-.bubbles{display:flex;gap:12px;overflow-x:auto;padding:4px 20px 6px;scroll-snap-type:x proximity;scrollbar-width:none}
-.bubbles::-webkit-scrollbar{display:none}
-.bub{flex:none;display:grid;justify-items:center;gap:5px;width:var(--bw,62px);background:none;border:0;padding:0;color:var(--text);cursor:pointer;scroll-snap-align:center}
-.bub .av{width:calc(var(--bw,62px) - 8px);height:calc(var(--bw,62px) - 8px);border-radius:50%;object-fit:cover;background:var(--bg-deep);border:2px solid transparent;transition:transform .15s,border-color .15s,box-shadow .15s}
-.bub span{font:800 10.5px/1.1 var(--body);text-align:center;color:var(--soft);transition:color .15s}
-.bub[aria-current="true"] .av{border-color:var(--mint);box-shadow:0 0 0 2px var(--mint)}
-.bub[aria-current="true"] span{color:var(--mint)}
-.bubnav{position:absolute;top:18px;z-index:3;width:30px;height:30px;display:grid;place-items:center;padding:0 0 3px;border:1.5px solid rgba(255,245,236,.7);border-radius:50%;background:var(--bg);color:var(--text);font:600 22px/1 var(--body);cursor:pointer;opacity:0;pointer-events:none;transition:opacity .2s,background .15s}
-.bubnav.l{left:2px}.bubnav.r{right:2px}
-.bubfade.more-l .bubnav.l,.bubfade.more-r .bubnav.r{opacity:1;pointer-events:auto}
-@media (hover:none){.bubnav{display:none}}
-@media (hover:hover){.bubfade::before,.bubfade::after{width:84px}.bubbles{padding:4px 38px 6px}.bubnav{width:28px;height:28px}.bubnav.l{left:0}.bubnav.r{right:0}}
 .stage{position:relative;display:grid;place-items:center;min-height:min(370px,46vh);margin-top:30px;touch-action:pan-y}
 .stage img{max-width:min(300px,62vw);max-height:min(370px,46vh);width:auto;height:auto;border-radius:2px;box-shadow:0 14px 34px rgba(0,0,0,.35);
   transition:opacity .17s ease,transform .32s cubic-bezier(.2,.8,.2,1)}
@@ -189,10 +170,58 @@ table.lg{width:100%;border-collapse:collapse;font-size:14px;font-variant-numeric
   .more a:hover span{transform:translateX(4px)}
   .strip a:hover img{transform:translateY(-4px);border-color:var(--pink)}
   .pg:hover{background:rgba(255,255,255,.18)}
-  .bub:hover .av{transform:scale(1.08)}
-  .bub:not([aria-current="true"]):hover span{color:var(--text)}
-  .bubnav:hover{background:#7d2430}
   .chip:not([aria-pressed="true"]):hover,.btn:hover{background:rgba(255,255,255,.18)}
   .fine a:hover,.more a:hover{text-decoration-thickness:2px}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}html{scroll-behavior:auto}@view-transition{navigation:none}}
+
+/* Lista + låda */
+.plist{list-style:none;margin:8px 0 0;padding:0}
+.pl-letter{padding:18px 4px 6px;font:800 11px/1 var(--body);letter-spacing:.14em;color:var(--accent);border-bottom:1px solid var(--line)}
+.plist li:first-child.pl-letter{padding-top:6px}
+/* rader som paneler/kort */
+:root{--panel:#B8424F}
+.plist li:not(.pl-letter){margin-top:10px}
+.pl-letter+li{margin-top:12px}
+.pl-letter{border-bottom:0;padding:22px 2px 0}
+.prow{position:relative;display:flex;align-items:center;gap:14px;width:100%;padding:12px 14px 12px 12px;background:var(--panel);border:1.5px solid rgba(255,245,236,.34);border-radius:2px;box-shadow:0 3px 0 rgba(0,0,0,.24);color:var(--text);text-align:left;cursor:pointer;transition:transform .16s cubic-bezier(.2,.8,.2,1),box-shadow .16s,border-color .16s,background .16s}
+.prow .av{width:58px;height:58px;flex:none;border-radius:50%;object-fit:cover;background:var(--bg-deep);border:2px solid rgba(255,245,236,.55)}
+.pt{flex:1;min-width:0;display:grid;gap:3px}
+.pt b{font-weight:800;font-size:17px;line-height:1.15}
+.pt small{font:700 11px/1.3 var(--body);letter-spacing:.08em;text-transform:uppercase;color:#FFE3E7}
+.pt em{font:italic 600 13px/1.3 var(--body);color:var(--accent);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mini{flex:none;width:38px;height:58px;margin-left:2px;transform:rotate(4deg);transition:transform .2s cubic-bezier(.2,.8,.2,1)}
+.mini img{width:100%;height:100%;object-fit:cover;object-position:50% 0;border-radius:2px;box-shadow:0 4px 8px rgba(0,0,0,.4);background:var(--bg-deep)}
+.prow:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(0,0,0,.24);background:#A93340}
+.prow:active .mini{transform:rotate(0) scale(1.06)}
+@media (hover:hover){.prow:hover{transform:translateY(-2px);border-color:var(--cream);box-shadow:0 8px 16px rgba(0,0,0,.3)}.prow:hover .mini{transform:rotate(-2deg) translateY(-3px)}}
+body.sheet-open{overflow:hidden}
+
+/* lådan */
+.sheet-backdrop{position:fixed;inset:0;z-index:70;background:rgba(30,10,14,.72);opacity:0;pointer-events:none;transition:opacity .3s}
+body.sheet-open .sheet-backdrop{opacity:1;pointer-events:auto}
+.sheet{position:fixed;inset:0;z-index:80;display:flex;flex-direction:column;background:var(--sheet-bg,var(--bg));border-radius:6px 6px 0 0;transform:translateY(100%);visibility:hidden;outline:0;overscroll-behavior:contain;
+  transition:transform .32s cubic-bezier(.4,0,.9,.55),visibility 0s .32s;box-shadow:0 -10px 40px rgba(0,0,0,.35)}
+body.sheet-open .sheet{transform:translateY(0);visibility:visible;transition:transform .46s cubic-bezier(.16,.92,.24,1)}
+.sheet.dragging,body.sheet-open .sheet.dragging{transition:none}
+.sheet-head{position:relative;flex:none;height:54px;display:grid;place-items:center;touch-action:none;cursor:grab;user-select:none}
+.sheet-head:active{cursor:grabbing}
+.grab{width:46px;height:5px;border-radius:3px;background:rgba(255,245,236,.55)}
+.sx{position:absolute;right:10px;top:7px;width:40px;height:40px;display:grid;place-items:center;padding:0 0 3px;border:1.5px solid rgba(255,245,236,.6);border-radius:2px;background:transparent;color:var(--text);font:600 26px/1 var(--body);cursor:pointer;transition:background .15s}
+.sx:hover{background:rgba(255,255,255,.16)}
+.sheet-body{flex:1;overflow-y:auto;overscroll-behavior:contain;padding:0 16px max(44px,env(safe-area-inset-bottom));-webkit-overflow-scrolling:touch}
+.sheet-body>*{max-width:640px;margin-left:auto;margin-right:auto}
+.sheet .stage{margin-top:4px}
+/* innehållet kommer in med lådan */
+body.sheet-open .sheet .stage img{animation:cardin .7s .1s cubic-bezier(.16,.92,.24,1) backwards}
+body.sheet-open .sheet .who,body.sheet-open .sheet .detail,body.sheet-open .sheet .pager{animation:rise .5s .2s cubic-bezier(.2,.8,.2,1) backwards}
+@keyframes cardin{from{opacity:0;transform:translateY(46px) scale(.9)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.sheet,.sheet-backdrop{transition:none!important}}
+
+/* från rad till helskärm och tillbaka (klippet växer ut från raden) */
+.sheet.morph-open,.sheet.morph-close{transform:none!important;visibility:visible!important;border-radius:0;box-shadow:none;transition:clip-path .52s cubic-bezier(.2,.9,.2,1),background-color .52s!important}
+.sheet.morph-close{transition:clip-path .44s cubic-bezier(.5,0,.2,1),background-color .44s!important}
+.sheet.morph-open .sheet-head,.sheet.morph-open .sheet-body{animation:fadein .3s .16s ease-out backwards}
+.sheet.morph-close .sheet-head,.sheet.morph-close .sheet-body{opacity:0;transition:opacity .16s}
+@keyframes fadein{from{opacity:0}to{opacity:1}}
+body.sheet-open .sheet.morph-open .stage img{animation:cardin .6s .24s cubic-bezier(.16,.92,.24,1) backwards}
