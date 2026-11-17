@@ -223,8 +223,8 @@ body.sheet-open .sheet{transform:translateY(0);visibility:visible;transition:tra
 .sheet-body>*{max-width:640px;margin-left:auto;margin-right:auto}
 .sheet .stage{margin-top:4px}
 /* innehållet kommer in med lådan */
-body.sheet-open .sheet .stage img{animation:cardin .7s .1s cubic-bezier(.16,.92,.24,1) backwards}
-body.sheet-open .sheet .who,body.sheet-open .sheet .detail,body.sheet-open .sheet .pager{animation:rise .5s .2s cubic-bezier(.2,.8,.2,1) backwards}
+body.sheet-open .sheet.fx .stage img{animation:cardin .7s .1s cubic-bezier(.16,.92,.24,1) backwards}
+body.sheet-open .sheet.fx .who,body.sheet-open .sheet.fx .detail,body.sheet-open .sheet.fx .pager{animation:rise .5s .2s cubic-bezier(.2,.8,.2,1) backwards}
 @keyframes cardin{from{opacity:0;transform:translateY(46px) scale(.9)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion:reduce){.sheet,.sheet-backdrop{transition:none!important}}
 
@@ -264,4 +264,8 @@ body.sheet-open .sheet.morph-open .stage img{animation:cardin .6s .24s cubic-bez
 .posv .pp.now{font:600 22px/1 var(--display);color:var(--cream)}
 .posv .pp.up{color:var(--mint)}
 .posv i{font-style:normal;color:var(--soft)}
+
+/* öppnad direkt från en länk: lådan står på plats från första bilden */
+body.instant .sheet,body.instant .sheet *,body.instant .sheet-backdrop{transition:none!important;animation:none!important}
+.bars.still .bar,.bars.still .bar i{transition:none}
 

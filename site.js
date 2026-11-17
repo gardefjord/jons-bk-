@@ -183,7 +183,7 @@ function showMatch(id) {
   else h += '<p class="soft">Första matchen för ' + esc(m.opp) + ' i år.</p>';
   h += '<p class="fine">Resultat och tabell från <a href="https://korpenstockholm.zoezi.se/serie/8346">Korpen Stockholm</a>. Väder från <a href="https://open-meteo.com/">Open-Meteo.com</a>.</p></div></div>';
   $("sbody").innerHTML = h;
-  var mx = $("sbody").querySelector(".mx"); if (mx) replay(mx);
+  var mx = $("sbody").querySelector(".mx"); if (mx && !INSTANT) replay(mx);
 }
 
 /* ---------- laget ---------- */
@@ -210,13 +210,16 @@ function makeDrawer(cfg) {
   var OPEN_MS = 520, CLOSE_MS = 440, moveTimer = null;
   function insetFor(r) { return "inset(" + Math.max(0, r.top) + "px " + Math.max(0, innerWidth - r.right) + "px " + Math.max(0, innerHeight - r.bottom) + "px " + Math.max(0, r.left) + "px round 2px)"; }
   function rowEl(id) { return document.querySelector(cfg.row.split(",").map(function (s) { return s + '[data-id="' + id + '"]'; }).join(",")); }
-  function jump(id) { curId = id; cfg.show(id); try { history.replaceState({ sheet: id }, "", "#" + cfg.hash(id)); } catch (e) {} sbody.scrollTo({ top: 0, behavior: "smooth" }); }
+  function jump(id) { curId = id; cfg.show(id); try { history.replaceState(keep(), "", "#" + cfg.hash(id)); } catch (e) {} sbody.scrollTo({ top: 0, behavior: "smooth" }); }
   function reduced() { return matchMedia("(prefers-reduced-motion: reduce)").matches; }
+  function keep() { return { sheet: curId, initial: !!(history.state && history.state.initial) }; }
   function go(n) {
     var ids = cfg.ids(), i = (ids.indexOf(curId) + n + ids.length) % ids.length; curId = ids[i]; cfg.show(curId);
-    try { history.replaceState({ sheet: curId }, "", "#" + cfg.hash(curId)); } catch (e) {} sbody.scrollTo({ top: 0, behavior: "smooth" });
+    try { history.replaceState(keep(), "", "#" + cfg.hash(curId)); } catch (e) {} sbody.scrollTo({ top: 0, behavior: "smooth" });
   }
-  function open(id, fromHash) {
+  function open(id, fromHash, instant) {
+    INSTANT = !!instant; if (instant) document.body.classList.add("instant");
+    sheet.classList.toggle("fx", !instant);
     curId = id; cfg.show(id); isOpen = true; sbody.scrollTop = 0; sheet.style.transform = ""; bk.style.opacity = "";
     clearTimeout(moveTimer); sheet.classList.remove("morph-close");
     var row = fromHash ? null : rowEl(id), r = row && row.getBoundingClientRect();
@@ -230,6 +233,7 @@ function makeDrawer(cfg) {
       moveTimer = setTimeout(function () { sheet.classList.remove("morph-open"); sheet.style.clipPath = ""; sheet.style.removeProperty("--sheet-bg"); }, OPEN_MS + 40);
     }
     document.body.classList.add("sheet-open"); sheet.setAttribute("aria-hidden", "false");
+    if (instant) { void sheet.offsetWidth; requestAnimationFrame(function () { requestAnimationFrame(function () { document.body.classList.remove("instant"); INSTANT = false; }); }); }
     setTimeout(function () { sheet.focus({ preventScroll: true }); }, 60);
     if (!fromHash) { try { history.pushState({ sheet: id }, "", "#" + cfg.hash(id)); } catch (e) {} }
   }
@@ -252,7 +256,7 @@ function makeDrawer(cfg) {
     } else { sheet.style.transform = ""; }
     document.body.classList.remove("sheet-open"); sheet.setAttribute("aria-hidden", "true");
     if (opener) { try { (rowEl(curId) || opener).focus({ preventScroll: true }); } catch (e) {} }
-    if (!fromPop) { try { if (history.state && history.state.sheet) history.back(); else history.replaceState(null, "", location.pathname + location.search); } catch (e) {} }
+    if (!fromPop) { try { if (history.state && history.state.sheet && !history.state.initial) history.back(); else history.replaceState(null, "", location.pathname + location.search); } catch (e) {} }
   }
   window.addEventListener("popstate", function () {
     var s = history.state && history.state.sheet;
@@ -297,7 +301,7 @@ function makeDrawer(cfg) {
   bk.addEventListener("click", function () { close(); });
 
   var h0 = cfg.fromHash(location.hash.slice(1));
-  if (h0) { opener = null; open(h0, true); try { history.replaceState({ sheet: h0 }, "", "#" + cfg.hash(h0)); } catch (e) {} }
+  if (h0) { opener = null; open(h0, true, true); try { history.replaceState({ sheet: h0, initial: true }, "", "#" + cfg.hash(h0)); } catch (e) {} }
   return { open: open, close: close, go: go, jump: jump };
 }
 
@@ -359,8 +363,9 @@ function swapImg(src, alt, dir) {
     if (pre.complete) show(); else { pre.onload = show; pre.onerror = show; }
   }, 170);
 }
-function countTo(el, to) {
-  var from = +el.textContent || 0; if (from === to) { el.textContent = to; return; }
+var INSTANT = false; /* sant när lådan öppnas direkt från en länk: inget glid, ingen inton, inga animerade staplar */
+function countTo(el, to, still) {
+  var from = +el.textContent || 0; if (still || from === to) { el.textContent = to; return; }
   if (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) { el.textContent = to; return; }
   var t0 = null; el._to = to;
   function tick(t) { if (el._to !== to) return; if (!t0) t0 = t; var k = Math.min(1, (t - t0) / 500), e = 1 - Math.pow(1 - k, 3); el.textContent = Math.round(from + (to - from) * e); if (k < 1) requestAnimationFrame(tick); }
@@ -372,7 +377,7 @@ function showSerie(sid, dir) {
   swapImg(k.bild, cur.namn + ", " + (POS[k.pos] || k.pos).toLowerCase() + ", kortserie " + seriesName(k.serie), dir || 0);
   $("dpos").textContent = (POS[k.pos] || k.pos) + " · " + seriesName(k.serie);
   document.querySelectorAll("#chips .chip").forEach(function (c) { c.setAttribute("aria-pressed", c.dataset.s === k.serie ? "true" : "false"); });
-  var ys = yearCards(cur), compare = ys.length > 1 && ys.indexOf(k) >= 0, cards = compare ? ys : [k], last = cards[cards.length - 1];
+  var still = INSTANT, ys = yearCards(cur), compare = ys.length > 1 && ys.indexOf(k) >= 0, cards = compare ? ys : [k], last = cards[cards.length - 1];
   var rows = last.stats.map(function (s) { return s[0]; });
   cards.forEach(function (c) { c.stats.forEach(function (s) { if (rows.indexOf(s[0]) < 0) rows.push(s[0]); }); });
   function val(c, lab) { var s = c.stats.filter(function (x) { return x[0] === lab; })[0]; return s ? s[1] : null; }
@@ -385,16 +390,16 @@ function showSerie(sid, dir) {
       return '<li><span class="lab">' + esc(lab) + '</span><div class="tracks">' + cards.map(function (c, i) { return '<div class="bar ' + (i === cards.length - 1 ? 'new' : 'old') + '" data-s="' + esc(c.serie) + '"><i style="width:0"></i></div>'; }).join("") + '</div>' +
         '<span class="nums">' + (compare ? '<small>0</small><span class="arr" aria-hidden="true">→</span>' : '') + '<b>0</b></span><em></em></li>';
     }).join("");
-    replay(ul);
+    if (!still) replay(ul);
   }
-  ul.classList.toggle("compare", compare);
+  ul.classList.toggle("compare", compare); ul.classList.toggle("still", still);
   requestAnimationFrame(function () { requestAnimationFrame(function () {
     Array.prototype.forEach.call(ul.children, function (li, r) {
       var lab = rows[r], vNew = val(last, lab), vOld = compare ? val(cards[0], lab) : null;
       cards.forEach(function (c, i) { var v = val(c, lab), bar = li.querySelectorAll(".bar")[i]; bar.querySelector("i").style.width = (v === null ? 0 : v) + "%"; bar.classList.toggle("on", c === k); });
       var b = li.querySelector("b"), sm = li.querySelector("small"), arr = li.querySelector(".arr"), em = li.querySelector("em");
-      if (vNew === null) { b.textContent = "–"; } else countTo(b, vNew);
-      if (sm) { if (vOld === null) { sm.textContent = ""; arr.style.visibility = "hidden"; } else { arr.style.visibility = ""; countTo(sm, vOld); } }
+      if (vNew === null) { b.textContent = "–"; } else countTo(b, vNew, still);
+      if (sm) { if (vOld === null) { sm.textContent = ""; arr.style.visibility = "hidden"; } else { arr.style.visibility = ""; countTo(sm, vOld, still); } }
       var up = (vOld !== null && vNew !== null) ? vNew - vOld : 0;
       em.textContent = up > 0 ? "+" + up + " ♥" : "";
       li.setAttribute("aria-label", lab + ": " + (compare && vOld !== null ? cards[0].serie + " " + vOld + ", " + last.serie + " " + (vNew === null ? "saknas" : vNew) : (vNew === null ? "saknas" : vNew)));
