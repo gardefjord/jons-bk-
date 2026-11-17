@@ -48,23 +48,30 @@ function lists(s) {
   var done = ms.filter(played).sort(function (a, b) { return when(b) - when(a); });
   return { next: up[0], later: up.slice(1), done: done };
 }
-function nextCard(s, next) {
+function nextCard(s, next, mode) {
   var h = '<section aria-labelledby="h-next"><div class="card">';
   h += '<h2 class="nameplate" id="h-next">Nästa match</h2>';
   if (next) {
     var d = when(next);
     h += '<div class="scene"><span class="sticker">' + esc(countdown(d)) + '</span><div class="versus"><span class="us">Jons BK</span><span class="vs">mot</span><span class="them">' + esc(next.opp) + '</span></div></div>';
-    h += '<div class="flame"><dl class="stats"><dt>Dag</dt><dd>' + esc(fmtDay(d, true)) + '</dd><dt>Avspark</dt><dd>' + esc(next.time || "Meddelas") + '</dd><dt>Plan</dt><dd>' + esc(next.pitch || s.venue) + '</dd><dt>Kärlek</dt><dd>100</dd></dl></div>';
+    h += '<div class="flame"><dl class="stats"><dt>Dag</dt><dd>' + esc(fmtDay(d, true)) + '</dd><dt>Avspark</dt><dd>' + esc(next.time || "Meddelas") + '</dd><dt>Plan</dt><dd>' + esc(next.pitch || s.venue) + '</dd><dt>Kärlek</dt><dd>100</dd></dl>' + (next.id != null ? (mode === "a" ? '<a class="mnext" href="matcher.html#m' + esc(next.id) + '">Mer om matchen &rarr;</a>' : '<button type="button" class="mnext mopen" data-id="' + esc(next.id) + '">Mer om matchen &rarr;</button>') : '') + '</div>';
   } else {
     h += '<div class="scene"><p class="empty">Ingen match är inbokad just nu.<br>Håll kärleken varm.</p></div>';
     h += '<div class="flame"><dl class="stats"><dt>Plan</dt><dd>' + esc(s.venue) + '</dd><dt>Kärlek</dt><dd>100</dd></dl></div>';
   }
   return h + '</div></section>';
 }
-function upcoming(s, later) {
+/* En matchrad: på startsidan en länk till matchen, på Matcher en knapp som öppnar lådan */
+function rowTag(m, mode) {
+  var id = esc(m.id);
+  if (m.id == null) return ['<div class="mrow plain">', '</div>'];
+  return mode === "a" ? ['<a class="mrow" href="matcher.html#m' + id + '" data-id="' + id + '">', '</a>'] : ['<button type="button" class="mrow" data-id="' + id + '">', '</button>'];
+}
+var CHEV = '<span class="chev" aria-hidden="true">&rsaquo;</span>';
+function upcoming(s, later, mode) {
   if (!later.length) return "";
   var h = '<ul class="rows">';
-  later.forEach(function (m) { var d = when(m); h += '<li><span class="when">' + esc(fmtDay(d)) + ', ' + esc(m.time || "tid meddelas") + ' på ' + esc(m.pitch || s.venue) + '</span><span class="res up" aria-hidden="true">&hearts;</span><span class="opp">' + esc(m.opp) + '</span><span></span></li>'; });
+  later.forEach(function (m) { var d = when(m), t = rowTag(m, mode); h += '<li>' + t[0] + '<span class="when">' + esc(fmtDay(d)) + ', ' + esc(m.time || "tid meddelas") + ' på ' + esc(m.pitch || s.venue) + '</span><span class="res up" aria-hidden="true">&hearts;</span><span class="opp">' + esc(m.opp) + '</span>' + CHEV + t[1] + '</li>'; });
   return sec("Kommande matcher", h + '</ul>');
 }
 function chip(r, small) { return '<span class="res ' + r + '" title="' + RES[r][1] + '" aria-label="' + RES[r][1] + '">' + RES[r][0] + '</span>'; }
@@ -74,15 +81,15 @@ function formRow(done) {
   done.slice(0, 5).reverse().forEach(function (m) { h += chip(resOf(m)); });
   return h + '</p>';
 }
-function resRows(list) {
+function resRows(list, mode) {
   var h = '<ul class="rows">';
-  list.forEach(function (m) { var r = resOf(m); h += '<li><span class="when">' + esc(fmtDay(when(m))) + '</span>' + chip(r) + '<span class="opp">' + esc(m.opp) + '</span><span class="score">' + esc(m.gf) + '&ndash;' + esc(m.ga) + '</span></li>'; });
+  list.forEach(function (m) { var r = resOf(m), t = rowTag(m, mode); h += '<li>' + t[0] + '<span class="when">' + esc(fmtDay(when(m))) + (m.walkover ? ' &middot; walkover' : '') + '</span>' + chip(r) + '<span class="opp">' + esc(m.opp) + '</span><span class="score">' + esc(m.gf) + '&ndash;' + esc(m.ga) + '</span>' + CHEV + t[1] + '</li>'; });
   return h + '</ul>';
 }
 var LEGEND = '<p class="fine">Jons BK:s mål står alltid först i resultatet. V = vinst, O = oavgjort, L = lärdom.</p>';
-function playedList(done) {
+function playedList(done, mode) {
   if (!done.length) return '<p>Inga matcher spelade än den här säsongen. Det bästa är fortfarande på väg.</p>';
-  return formRow(done) + resRows(done) + LEGEND;
+  return formRow(done) + resRows(done, mode) + LEGEND;
 }
 function standings(s) {
   return (s.table || []).map(function (r) {
@@ -100,8 +107,8 @@ function tableHtml(s) {
 var DEMO = '<p class="note">Resultaten och tabellen här är exempel för att visa designen. De riktiga är på väg.</p>';
 
 function pageStart(s, pl) {
-  var L = lists(s), h = (s.demo ? DEMO : "") + nextCard(s, L.next) + upcoming(s, L.later);
-  if (L.done.length) h += sec("Senaste resultat", resRows(L.done.slice(0, 5)) + LEGEND + '<p class="more"><a href="matcher.html#spelade">Alla resultat och tabellen <span aria-hidden="true">&rarr;</span></a></p>');
+  var L = lists(s), h = (s.demo ? DEMO : "") + nextCard(s, L.next, "a") + upcoming(s, L.later, "a");
+  if (L.done.length) h += sec("Senaste resultat", resRows(L.done.slice(0, 5), "a") + LEGEND + '<p class="more"><a href="matcher.html#spelade">Alla resultat och tabellen <span aria-hidden="true">&rarr;</span></a></p>');
   if (pl && pl.spelare) {
     h += '<section class="sec"><h2>Laget</h2><div class="strip">' + pl.spelare.filter(function (p) { return p.grupp === "trupp"; }).map(function (p) { var k = pick(p, "2026"); return '<a href="laget.html#' + esc(p.id) + '"><img src="' + esc(k.bild) + '" width="250" height="390" loading="lazy" alt="' + esc(p.namn) + ', spelarkort"></a>'; }).join("") + '</div><p class="more strip-more"><a href="laget.html">Möt laget <span aria-hidden="true">&rarr;</span></a></p></section>';
   }
@@ -109,7 +116,74 @@ function pageStart(s, pl) {
 }
 function pageMatcher(s) {
   var L = lists(s);
-  frame((s.demo ? DEMO : "") + (L.next ? nextCard(s, L.next) : "") + upcoming(s, L.later) + sec("Spelade matcher", playedList(L.done), "spelade") + sec("Tabell", tableHtml(s), "tabell"), s);
+  frame((s.demo ? DEMO : "") + (L.next ? nextCard(s, L.next, "btn") : "") + upcoming(s, L.later, "btn") + sec("Spelade matcher", playedList(L.done, "btn"), "spelade") + sec("Tabell", tableHtml(s), "tabell"), s);
+  MS = (s.matches || []).filter(function (m) { return m.id != null; }).sort(function (a, b) { return when(a) - when(b); });
+  if (!MS.length) return;
+  document.body.insertAdjacentHTML("beforeend", drawerHtml("Match", ""));
+  MDRAW = makeDrawer({
+    row: ".mrow,.mopen", swipe: "#sbody",
+    ids: function () { return MS.map(function (m) { return String(m.id); }); },
+    show: showMatch,
+    hash: function (id) { return "m" + id; },
+    fromHash: function (h) { var x = /^m(\d+)$/.exec(h); return x && matchById(x[1]) ? x[1] : null; },
+    onClick: function (e) { var j = e.target.closest("[data-match]"); if (j) MDRAW.jump(j.dataset.match); }
+  });
+}
+
+/* ---------- en match ---------- */
+var MS = [], MDRAW = null;
+var WCODE = { 0: "Klart", 1: "Mestadels klart", 2: "Halvklart", 3: "Mulet", 45: "Dimma", 48: "Dimma", 51: "Lätt duggregn", 53: "Duggregn", 55: "Kraftigt duggregn", 56: "Underkylt duggregn", 57: "Underkylt duggregn", 61: "Lätt regn", 63: "Regn", 65: "Kraftigt regn", 66: "Isregn", 67: "Isregn", 71: "Lätt snöfall", 73: "Snöfall", 75: "Kraftigt snöfall", 77: "Snökorn", 80: "Lätta skurar", 81: "Skurar", 82: "Kraftiga skurar", 85: "Snöbyar", 86: "Kraftiga snöbyar", 95: "Åska", 96: "Åska med hagel", 99: "Åska med hagel" };
+function matchById(id) { return MS.filter(function (m) { return String(m.id) === String(id); })[0]; }
+function ordinal(n) { return n + (n === 1 || n === 2 ? ":a" : ":e"); }
+function dec(n) { return String(n).replace(".", ","); }
+function ourGoalsFirst(m) { return US + " " + m.gf + "\u2013" + m.ga + " " + m.opp; }
+function mxPos(name, pair, isPlayed) {
+  var b = pair && pair[0], a = pair && pair[1];
+  if (!b && !a) return "";
+  var cell = isPlayed ? (b && a ? (a === b ? '<span class="pp">oförändrad</span><span class="pp now">' + ordinal(a) + '</span>' : '<span class="pp">' + ordinal(b) + '</span><i aria-hidden="true">&rarr;</i><span class="pp now' + (a < b ? ' up' : '') + '">' + ordinal(a) + '</span>') : '<span class="pp now">' + ordinal(a || b) + '</span>') : '<span class="pp now">' + ordinal(b) + '</span>';
+  return '<li><b>' + esc(name) + '</b><span class="posv">' + cell + '</span></li>';
+}
+function mxWeather(m, isPlayed) {
+  var w = m.weather;
+  if (m.walkover) return "";
+  if (!w) return isPlayed ? "" : '<h4>Väderprognos</h4><p class="soft">Prognosen visas när matchen är närmare.</p>';
+  var bits = [];
+  if (w.w != null) bits.push("Vind " + dec(w.w) + " m/s");
+  bits.push(w.r > 0 ? "Nederbörd " + dec(w.r) + " mm" : "Torrt");
+  if (w.ss) bits.push("Solnedgång " + w.ss);
+  var dark = w.ss && m.time && m.time >= w.ss;
+  return '<h4>' + (isPlayed ? "Vädret under matchen" : "Väderprognos") + '</h4><div class="wx"><b>' + w.t + '\u00a0\u00b0C</b><span>' + esc(WCODE[w.c] || "") + '</span></div>' +
+    '<p class="soft">' + bits.join(" \u00b7 ") + '</p>' + (dark ? '<p class="soft">' + (isPlayed ? "Det var mörkt när matchen började." : "Det blir mörkt när matchen börjar.") + '</p>' : '');
+}
+function showMatch(id) {
+  var m = matchById(id); if (!m) return;
+  var i = MS.indexOf(m), isPlayed = played(m), d = when(m), r = isPlayed ? resOf(m) : null, p = m.pos;
+  var h = '<div class="pager"><button type="button" class="pg" data-go="-1" aria-label="Föregående match">&larr;</button><p class="count" aria-live="polite">' + (i + 1) + ' / ' + MS.length + '</p><button type="button" class="pg" data-go="1" aria-label="Nästa match">&rarr;</button></div>';
+  h += '<div class="mx"><div class="who mxhead"><p class="mx-eyebrow">Match ' + (i + 1) + ' av ' + MS.length + '</p><h2 class="mx-title"><span>' + US + ' mot</span>' + esc(m.opp) + '</h2><p class="mx-when">' + esc(fmtDay(d, true)) + ' \u00b7 ' + esc(m.time || "tid meddelas") + '</p></div>';
+  if (isPlayed) {
+    h += '<div class="mx-result"><span class="res ' + r + '" aria-hidden="true">' + RES[r][0] + '</span><b>' + esc(m.gf) + '\u2013' + esc(m.ga) + '</b><small>' + RES[r][1] + '</small></div>';
+    if (m.walkover) h += '<p class="mx-note">' + (m.walkover === "them" ? "Walkover: " + esc(m.opp) + " kom inte, så matchen skrevs som " + m.gf + "\u2013" + m.ga + " till oss." : "Walkover: vi lämnade walkover och matchen skrevs som " + m.gf + "\u2013" + m.ga + ". Det händer i de bästa lag.") + '</p>';
+  } else {
+    h += '<div class="mx-result"><span class="sticker">' + esc(countdown(d)) + '</span><small>Avspark ' + esc(m.time || "meddelas") + '</small></div>';
+  }
+  h += '<div class="detail">';
+  h += '<h4>Matchen</h4><dl class="facts"><dt>Dag</dt><dd>' + esc(fmtDay(d, true)) + '</dd><dt>Avspark</dt><dd>' + esc(m.time || "Meddelas") + '</dd><dt>Plan</dt><dd>' + esc(m.pitch || "Långholmens BP") + ' <a class="ext" target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&amp;query=L%C3%A5ngholmens+BP+Stockholm">Karta &#8599;</a></dd></dl>';
+  h += mxWeather(m, isPlayed);
+  if (p && (p.us || p.opp)) {
+    var rows = mxPos(US, p.us, isPlayed) + mxPos(m.opp, p.opp, isPlayed);
+    if (rows) h += '<h4>Tabellen</h4><ul class="tabl">' + rows + '</ul><p class="soft">' + (isPlayed ? ((p.us && p.us[0]) || (p.opp && p.opp[0]) ? "Placering före och efter matchdagen" : "Placering efter matchdagen") : "Placering just nu") + (p.teams ? ", av " + p.teams + " lag." : ".") + '</p>';
+  }
+  h += '<h4>Förra mötet</h4>';
+  if (m.h2h) {
+    var hh = { gf: m.h2h.gf, ga: m.h2h.ga, opp: m.opp }, hr = resOf(hh), body = '<span class="when">' + esc(fmtDay(when({ date: m.h2h.date, time: "00:00" }))) + (m.h2h.walkover ? ' \u00b7 walkover' : '') + '</span>' + chip(hr) + '<span class="opp">' + esc(ourGoalsFirst(hh)) + '</span>' + CHEV;
+    h += '<ul class="rows"><li>' + (m.h2h.id != null && matchById(m.h2h.id) ? '<button type="button" class="mrow" data-match="' + esc(m.h2h.id) + '">' + body + '</button>' : '<div class="mrow plain">' + body + '</div>') + '</li></ul>';
+  } else h += '<p class="soft">Första mötet med ' + esc(m.opp) + ' i år.</p>';
+  h += '<h4>' + esc(m.opp) + ', senaste fem</h4>';
+  if (m.oppForm && m.oppForm.length) h += '<p class="form" style="border:0;padding:0;margin:0">' + m.oppForm.map(function (x) { return chip(x); }).join("") + '</p>';
+  else h += '<p class="soft">Första matchen för ' + esc(m.opp) + ' i år.</p>';
+  h += '<p class="fine">Resultat och tabell från <a href="https://korpenstockholm.zoezi.se/serie/8346">Korpen Stockholm</a>. Väder från <a href="https://open-meteo.com/">Open-Meteo.com</a>.</p></div></div>';
+  $("sbody").innerHTML = h;
+  var mx = $("sbody").querySelector(".mx"); if (mx) replay(mx);
 }
 
 /* ---------- laget ---------- */
@@ -118,41 +192,32 @@ var PL = null, SERIES = [], cur = null, curSerie = null;
 function seriesName(id) { var s = SERIES.filter(function (x) { return x.id === id; })[0]; return s ? s.namn : id; }
 function order(p) { var ids = SERIES.map(function (s) { return s.id; }); return p.kort.slice().sort(function (a, b) { return ids.indexOf(a.serie) - ids.indexOf(b.serie); }); }
 function pick(p, id) { return p.kort.filter(function (k) { return k.serie === id; })[0] || p.kort[0]; }
-/* Spelarlista med kortlåda: ett tryck öppnar spelarens kort som en låda över hela skärmen */
-var SHORTP = { ST: "Anfallare", LW: "Vänsterytter", RW: "Högerytter", CM: "Mittfältare", LB: "Vänsterback", RB: "Högerback", CB: "Mittback", MB: "Mittback", GK: "Målvakt" };
-function pos(p) { return SHORTP[pick(p, "2026").pos] || ""; }
-var SHEET = '<div class="sheet-backdrop" id="sbk"></div>' +
-  '<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-label="Spelarkort" aria-hidden="true" tabindex="-1">' +
-  '<div class="sheet-head" id="shead"><span class="grab"></span><button type="button" class="sx" id="sclose" aria-label="Stäng">&times;</button></div>' +
-  '<div class="sheet-body" id="sbody">' +
-  '<div class="stage" id="stage"><img id="dimg" alt=""></div>' +
+/* ---------- lådan (delas av spelare och matcher) ---------- */
+var PLAYER_BODY = '<div class="stage" id="stage"><img id="dimg" alt=""></div>' +
   '<div class="pager"><button type="button" class="pg" data-go="-1" aria-label="Föregående spelare">&larr;</button><p class="count" id="count" aria-live="polite"></p><button type="button" class="pg" data-go="1" aria-label="Nästa spelare">&rarr;</button></div>' +
   '<div class="who" id="who"><h2 id="dn"></h2><p id="dpos"></p></div>' +
   '<div class="detail"><div class="chips" id="chips" role="group" aria-label="Kortserie"></div><h4 id="sh"></h4><p class="legend" id="legend"></p><ul class="bars" id="dbars"></ul><div id="extra"></div>' +
-  '<div class="lovemeter">Kärlek 100 av 100<div class="bar" role="img" aria-label="Kärlek: 100 av 100"></div></div></div>' +
-  '</div></div>';
-
-function pageLaget(d, data) {
-  SERIES = data.serier || [];
-  PL = data.spelare.slice().sort(function (a, b) { return a.namn.localeCompare(b.namn, "sv"); });
-  var h = '<ul class="plist" aria-label="Spelare">', last = "";
-  PL.forEach(function (p) {
-    var L = p.namn.charAt(0).toUpperCase();
-    if (L !== last) { last = L; h += '<li class="pl-letter" aria-hidden="true">' + L + '</li>'; }
-    var kk = pick(p, "2026");
-    h += '<li><button type="button" class="prow" data-id="' + esc(p.id) + '"><img class="av" src="assets/avatars/' + esc(p.id) + '.jpg" alt="" width="64" height="64" loading="lazy"><span class="pt"><b>' + esc(p.namn) + ' ' + esc(p.flagga || "") + '</b><small>' + esc(pos(p)) + '</small>' + (p.superkraft ? '<em>' + esc(p.superkraft.namn) + '</em>' : '') + '</span><span class="mini"><img src="' + esc(kk.bild) + '" alt="" width="250" height="390" loading="lazy"></span></button></li>';
-  });
-  frame(h + '</ul>', d);
-  document.body.insertAdjacentHTML("beforeend", SHEET);
-
-  var sheet = $("sheet"), sbody = $("sbody"), shead = $("shead"), bk = $("sbk"), isOpen = false, opener = null;
-  function go(n) { var i = (PL.indexOf(cur) + n + PL.length) % PL.length; select(PL[i].id, true); try { history.replaceState({ sheet: PL[i].id }, "", "#" + PL[i].id); } catch (e) {} sbody.scrollTo({ top: 0, behavior: "smooth" }); }
+  '<div class="lovemeter">Kärlek 100 av 100<div class="bar" role="img" aria-label="Kärlek: 100 av 100"></div></div></div>';
+function drawerHtml(label, body) {
+  return '<div class="sheet-backdrop" id="sbk"></div>' +
+    '<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-label="' + label + '" aria-hidden="true" tabindex="-1">' +
+    '<div class="sheet-head" id="shead"><span class="grab"></span><button type="button" class="sx" id="sclose" aria-label="Stäng">&times;</button></div>' +
+    '<div class="sheet-body" id="sbody">' + body + '</div></div>';
+}
+/* cfg: row (väljare för raderna, med data-id), ids() (alla id i ordning), show(id) (fyller lådan), hash(id), fromHash(h) (id eller null), swipe (väljare där sidled svep byter) */
+function makeDrawer(cfg) {
+  var sheet = $("sheet"), sbody = $("sbody"), shead = $("shead"), bk = $("sbk"), isOpen = false, opener = null, curId = null;
   var OPEN_MS = 520, CLOSE_MS = 440, moveTimer = null;
   function insetFor(r) { return "inset(" + Math.max(0, r.top) + "px " + Math.max(0, innerWidth - r.right) + "px " + Math.max(0, innerHeight - r.bottom) + "px " + Math.max(0, r.left) + "px round 2px)"; }
-  function rowEl(id) { return document.querySelector('.prow[data-id="' + id + '"]'); }
+  function rowEl(id) { return document.querySelector(cfg.row.split(",").map(function (s) { return s + '[data-id="' + id + '"]'; }).join(",")); }
+  function jump(id) { curId = id; cfg.show(id); try { history.replaceState({ sheet: id }, "", "#" + cfg.hash(id)); } catch (e) {} sbody.scrollTo({ top: 0, behavior: "smooth" }); }
   function reduced() { return matchMedia("(prefers-reduced-motion: reduce)").matches; }
-  function openSheet(id, fromHash) {
-    select(id, true); isOpen = true; sbody.scrollTop = 0; sheet.style.transform = ""; bk.style.opacity = "";
+  function go(n) {
+    var ids = cfg.ids(), i = (ids.indexOf(curId) + n + ids.length) % ids.length; curId = ids[i]; cfg.show(curId);
+    try { history.replaceState({ sheet: curId }, "", "#" + cfg.hash(curId)); } catch (e) {} sbody.scrollTo({ top: 0, behavior: "smooth" });
+  }
+  function open(id, fromHash) {
+    curId = id; cfg.show(id); isOpen = true; sbody.scrollTop = 0; sheet.style.transform = ""; bk.style.opacity = "";
     clearTimeout(moveTimer); sheet.classList.remove("morph-close");
     var row = fromHash ? null : rowEl(id), r = row && row.getBoundingClientRect();
     var morph = r && r.bottom > 0 && r.top < innerHeight && !reduced();
@@ -166,16 +231,16 @@ function pageLaget(d, data) {
     }
     document.body.classList.add("sheet-open"); sheet.setAttribute("aria-hidden", "false");
     setTimeout(function () { sheet.focus({ preventScroll: true }); }, 60);
-    if (!fromHash) { try { history.pushState({ sheet: id }, "", "#" + id); } catch (e) {} }
+    if (!fromHash) { try { history.pushState({ sheet: id }, "", "#" + cfg.hash(id)); } catch (e) {} }
   }
   function finishClose() {
     sheet.classList.remove("morph-close"); sheet.style.clipPath = ""; sheet.style.removeProperty("--sheet-bg"); sheet.style.transition = "none";
     void sheet.offsetWidth; sheet.style.transition = "";
   }
-  function closeSheet(fromPop, slide) {
+  function close(fromPop, slide) {
     if (!isOpen) return; isOpen = false;
     sheet.classList.remove("dragging"); bk.style.opacity = "";
-    var row = !slide && cur ? rowEl(cur.id) : null, morph = row && !reduced();
+    var row = !slide && curId ? rowEl(curId) : null, morph = row && !reduced();
     if (morph) { row.scrollIntoView({ block: "center", behavior: "instant" }); }
     var r = morph && row.getBoundingClientRect();
     if (morph && r.bottom > 0 && r.top < innerHeight) {
@@ -186,23 +251,23 @@ function pageLaget(d, data) {
       moveTimer = setTimeout(finishClose, CLOSE_MS + 40);
     } else { sheet.style.transform = ""; }
     document.body.classList.remove("sheet-open"); sheet.setAttribute("aria-hidden", "true");
-    if (opener) { try { (rowEl(cur ? cur.id : "") || opener).focus({ preventScroll: true }); } catch (e) {} }
+    if (opener) { try { (rowEl(curId) || opener).focus({ preventScroll: true }); } catch (e) {} }
     if (!fromPop) { try { if (history.state && history.state.sheet) history.back(); else history.replaceState(null, "", location.pathname + location.search); } catch (e) {} }
   }
   window.addEventListener("popstate", function () {
     var s = history.state && history.state.sheet;
-    if (isOpen && !s) closeSheet(true); else if (!isOpen && s) openSheet(s, true);
+    if (isOpen && !s) close(true); else if (!isOpen && s) open(s, true);
   });
-  window.addEventListener("hashchange", function () { var id = location.hash.slice(1); if (!isOpen && PL.some(function (p) { return p.id === id; })) openSheet(id, true); });
-  root.addEventListener("click", function (e) { var r = e.target.closest(".prow"); if (r) { opener = r; openSheet(r.dataset.id); } });
+  window.addEventListener("hashchange", function () { var id = cfg.fromHash(location.hash.slice(1)); if (!isOpen && id) open(id, true); });
+  root.addEventListener("click", function (e) { var r = e.target.closest(cfg.row); if (r && r.dataset.id) { opener = r; open(r.dataset.id); } });
   sheet.addEventListener("click", function (e) {
-    if (e.target.closest("#sclose")) return closeSheet();
+    if (e.target.closest("#sclose")) return close();
     var g = e.target.closest("[data-go]"); if (g) return go(+g.dataset.go);
-    var c = e.target.closest(".chip"); if (c) showSerie(c.dataset.s, 0);
+    if (cfg.onClick) cfg.onClick(e);
   });
   document.addEventListener("keydown", function (e) {
     if (!isOpen) return;
-    if (e.key === "Escape") closeSheet(); else if (e.key === "ArrowLeft") go(-1); else if (e.key === "ArrowRight") go(1);
+    if (e.key === "Escape") close(); else if (e.key === "ArrowLeft") go(-1); else if (e.key === "ArrowRight") go(1);
   });
 
   /* dra ner för att stänga: i handtaget (mus och touch) och i innehållet när det ligger längst upp */
@@ -212,7 +277,7 @@ function pageLaget(d, data) {
   function dEnd() {
     if (!drag) return; var dy = drag.dy, v = dy / Math.max(1, performance.now() - drag.t0); drag = null;
     sheet.classList.remove("dragging");
-    if (dy > 110 || (dy > 30 && v > 0.55)) closeSheet(false, true); else { sheet.style.transform = ""; bk.style.opacity = ""; }
+    if (dy > 110 || (dy > 30 && v > 0.55)) close(false, true); else { sheet.style.transform = ""; bk.style.opacity = ""; }
   }
   shead.addEventListener("pointerdown", function (e) { if (e.target.closest("#sclose")) return; shead.setPointerCapture(e.pointerId); dStart(e.clientY); });
   shead.addEventListener("pointermove", function (e) { if (drag) dMove(e.clientY); });
@@ -226,13 +291,39 @@ function pageLaget(d, data) {
   }, { passive: false });
   sbody.addEventListener("touchend", function (e) {
     if (mode === "y") dEnd();
-    else if (mode === "x" && e.target.closest("#stage")) { var dx = e.changedTouches[0].clientX - tx; if (Math.abs(dx) > 40) go(dx < 0 ? 1 : -1); }
+    else if (mode === "x" && e.target.closest(cfg.swipe)) { var dx = e.changedTouches[0].clientX - tx; if (Math.abs(dx) > 40) go(dx < 0 ? 1 : -1); }
     ty = null; mode = null;
   }, { passive: true });
-  bk.addEventListener("click", function () { closeSheet(); });
+  bk.addEventListener("click", function () { close(); });
 
-  var h0 = location.hash.slice(1);
-  if (h0 && PL.some(function (p) { return p.id === h0; })) { opener = null; openSheet(h0, true); try { history.replaceState({ sheet: h0 }, "", "#" + h0); } catch (e) {} }
+  var h0 = cfg.fromHash(location.hash.slice(1));
+  if (h0) { opener = null; open(h0, true); try { history.replaceState({ sheet: h0 }, "", "#" + cfg.hash(h0)); } catch (e) {} }
+  return { open: open, close: close, go: go, jump: jump };
+}
+
+/* ---------- laget: spelarlista med kortlåda ---------- */
+var SHORTP = { ST: "Anfallare", LW: "Vänsterytter", RW: "Högerytter", CM: "Mittfältare", LB: "Vänsterback", RB: "Högerback", CB: "Mittback", MB: "Mittback", GK: "Målvakt" };
+function pos(p) { return SHORTP[pick(p, "2026").pos] || ""; }
+function pageLaget(d, data) {
+  SERIES = data.serier || [];
+  PL = data.spelare.slice().sort(function (a, b) { return a.namn.localeCompare(b.namn, "sv"); });
+  var h = '<ul class="plist" aria-label="Spelare">', last = "";
+  PL.forEach(function (p) {
+    var L = p.namn.charAt(0).toUpperCase();
+    if (L !== last) { last = L; h += '<li class="pl-letter" aria-hidden="true">' + L + '</li>'; }
+    var kk = pick(p, "2026");
+    h += '<li><button type="button" class="prow" data-id="' + esc(p.id) + '"><img class="av" src="assets/avatars/' + esc(p.id) + '.jpg" alt="" width="64" height="64" loading="lazy"><span class="pt"><b>' + esc(p.namn) + ' ' + esc(p.flagga || "") + '</b><small>' + esc(pos(p)) + '</small>' + (p.superkraft ? '<em>' + esc(p.superkraft.namn) + '</em>' : '') + '</span><span class="mini"><img src="' + esc(kk.bild) + '" alt="" width="250" height="390" loading="lazy"></span></button></li>';
+  });
+  frame(h + '</ul>', d);
+  document.body.insertAdjacentHTML("beforeend", drawerHtml("Spelarkort", PLAYER_BODY));
+  makeDrawer({
+    row: ".prow", swipe: "#stage",
+    ids: function () { return PL.map(function (p) { return p.id; }); },
+    show: function (id) { select(id, true); },
+    hash: function (id) { return id; },
+    fromHash: function (h) { return PL.some(function (p) { return p.id === h; }) ? h : null; },
+    onClick: function (e) { var c = e.target.closest(".chip"); if (c) showSerie(c.dataset.s, 0); }
+  });
 }
 
 
